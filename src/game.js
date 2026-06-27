@@ -357,7 +357,7 @@ function applyCrossBranchSynergy(branch) {
     state.rift = clamp(state.rift - 2, 0, BALANCE.riftThreshold);
     state.resources.supply = clamp(state.resources.supply + 1, 0, 4);
     state.resources.trust = clamp(state.resources.trust + 2, 0, 100);
-    pushLog('윤도현 지원이 남긴 길 위에 예지가 겹쳤다. 막힌 병목이 구조로 고정되며 다음 C구간의 바닥이 넓어졌다.');
+    pushLog('윤도현 지원이 남긴 길 위에 예지가 겹쳤다. 막힌 병목이 구조로 고정되며 다음 마지막 장면의 바닥이 넓어졌다.');
   } else if (prevId === 'protect_seah' && branch.id === 'memory_knot') {
     state.resources.memory += 1;
     state.resources.trust = clamp(state.resources.trust + 1, 0, 100);
@@ -518,7 +518,7 @@ function updateVisionPanel() {
 }
 
 function updateCarryoverSummary(extra = '') {
-  const base = '계승: 기억 조각·신뢰 / 초기화: 예지·집중력·확보 물자 · B의 선택은 C의 여파로 이어진다';
+  const base = '계승: 기억 조각·신뢰 / 초기화: 예지·집중력·확보 물자 · 중간 장면의 선택은 마지막 장면의 여파로 이어진다';
   els.carryoverSummary.textContent = extra ? `${base} · ${extra}` : base;
 }
 
@@ -635,7 +635,7 @@ function updateResources() {
   renderBranchMemory();
   renderBranchLinkCue();
   const runCue = state.runBonus > 0 ? ` · 회차 보상 예지 +${state.runBonus}` : '';
-  updateCarryoverSummary(`현재 평균 신뢰 ${averageTrust()}%${runCue} · 분기 여파는 마지막 장면에서 이어진다`);
+  updateCarryoverSummary(`현재 평균 신뢰 ${averageTrust()}%${runCue} · 마지막 장면의 여파가 다음 고리로 이어진다`);
   checkEndState();
 }
 
