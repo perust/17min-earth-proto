@@ -61,6 +61,20 @@
       </div>
     </main>
 
+    <footer class="controls">
+      <button id="btn-start" class="btn btn-primary">시작</button>
+      <button id="btn-pause" class="btn">일시정지</button>
+      <button id="btn-reset" class="btn btn-rewind">되감김</button>
+      <label class="speed">
+        속도
+        <select id="speed-select">
+          <option value="1">1× (실시간 17분)</option>
+          <option value="10">10×</option>
+          <option value="60" selected>60× (≈17초)</option>
+        </select>
+      </label>
+    </footer>
+
     <!-- 타임라인 바: 17분을 3구간으로 분절 -->
     <section class="timeline" aria-label="17분 타임라인">
       <div id="timeline-track" class="timeline-track">
@@ -81,20 +95,6 @@
       <div id="branch-memory" class="branch-memory" title="과거 루프의 미시 선택이 누적되는 분기 메모리">분기 메모리 — 아직 선택 없음</div>
       <div id="branch-link-cue" class="branch-link-cue">연결선 — 아직 열린 분기 없음</div>
     </section>
-
-    <!-- 루프 제어 (프로토타입용) -->
-    <footer class="controls">
-      <button id="btn-start" class="btn btn-primary">시작</button>
-      <button id="btn-pause" class="btn">일시정지</button>
-      <button id="btn-reset" class="btn btn-rewind">되감김</button>
-      <label class="speed">
-        속도
-        <select id="speed-select">
-          <option value="1">1× (실시간 17분)</option>
-          <option value="10">10×</option>
-          <option value="60" selected>60× (≈17초)</option>
-        </select>
-      </label>
     </footer>
 
     <!-- 첫 플레이 온보딩 오버레이 (루프·예지·분기 메모리 학습) -->
@@ -139,6 +139,6 @@
     </div>
   </div>
 
-  <script type="module" src="src/game.js?v=11"></script>
+  <script type="module" src="src/game.js?v=12"></script>
 </body>
 </html>
