@@ -161,7 +161,7 @@ export const TUTORIAL_STEPS = [
   {
     icon: '◷',
     title: '인물 카드',
-    body: '세 사람은 탭해서 자세히 본다. 필요한 정보만 펼치고, 다시 닫는다.',
+    body: '세 사람은 눌러서 자세히 본다. 필요한 정보만 펼치고, 다시 닫는다.',
   },
 ];
 
@@ -204,7 +204,7 @@ export const BRANCHES = [
   {
     id: 'route_anchor',
     label: '윤도현 경로 고정',
-    desc: '윤도현의 돌파선에 예지를 겹쳐 병목을 두 겹으로 잠근다 — 집중력 1과 신뢰 1을 써서 경로를 더 단단히 고정하고, 보급선을 조금 더 건진다.',
+    desc: '윤도현의 돌파선에 예지를 겹쳐 병목을 두 겹으로 잠근다. 집중력 1과 신뢰 1을 써서 경로를 더 단단히 고정하고, 보급선을 조금 더 건진다.',
     cost: { focus: 1, trust: 1 },
     primaryChar: 'yundohyeon',
     effects: { rift: -3, resources: { supply: 1, trust: 2 }, chars: { yundohyeon: 6, seogaram: 1 } },
@@ -228,7 +228,7 @@ export const BRANCHES = [
   {
     id: 'signal_lantern',
     label: '서가람 신호 고정',
-    desc: '서가람의 예지 신호를 현장에 꽂아 둔다 — 집중력 1과 신뢰 1을 써서 다음 선택이 흐려지지 않게 만든다.',
+    desc: '서가람의 예지 신호를 현장에 꽂아 둔다. 집중력 1과 신뢰 1을 써서 다음 선택이 흐려지지 않게 만든다.',
     cost: { focus: 1, trust: 1 },
     primaryChar: 'seogaram',
     effects: { rift: -2, resources: { memory: 1, supply: 1 }, chars: { seogaram: 7, yundohyeon: 1 } },
@@ -252,7 +252,7 @@ export const BRANCHES = [
   {
     id: 'protect_seah',
     label: '이세아 먼저',
-    desc: '이세아를 먼저 잡아낸다 — 기억의 실이 끊기지 않으면 다음 고리가 한 겹 더 선명해진다. 균열이 조금 벌어지고 집중력 둘이 든다.',
+    desc: '이세아를 먼저 잡아낸다. 기억의 실이 끊기지 않으면 다음 고리가 한 겹 더 선명해진다. 균열이 조금 벌어지고 집중력 둘이 든다.',
     cost: { focus: 2 },
     primaryChar: 'iseah',
     effects: { rift: 4, resources: { memory: 1, trust: 1 }, chars: { iseah: 9, yundohyeon: -3, seogaram: 1 } },
@@ -276,7 +276,7 @@ export const BRANCHES = [
   {
     id: 'memory_knot',
     label: '이세아 기억 매듭',
-    desc: '이세아의 기억 실을 묶어 이름이 흩어지지 않게 한다 — 집중력 1과 신뢰 1을 써서 기억 조각을 더 단단히 남긴다.',
+    desc: '이세아의 기억 실을 묶어 이름이 흩어지지 않게 한다. 집중력 1과 신뢰 1을 써서 기억 조각을 더 단단히 남긴다.',
     cost: { focus: 1, trust: 1 },
     primaryChar: 'iseah',
     effects: { rift: 1, resources: { memory: 1, trust: 2 }, chars: { iseah: 7, seogaram: 1 } },
@@ -300,7 +300,7 @@ export const BRANCHES = [
   {
     id: 'triage_chain',
     label: '윤도현 이세아 동시 구조',
-    desc: '윤도현의 동선을 이세아의 기억과 한 번에 묶는다 — 집중력 1과 확보 물자 1을 써서 두 사람의 길을 동시에 살린다.',
+    desc: '윤도현의 동선을 이세아의 기억과 한 번에 묶는다. 집중력 1과 확보 물자 1을 써서 두 사람의 길을 동시에 살린다.',
     cost: { focus: 1, supply: 1 },
     primaryChar: 'yundohyeon',
     effects: { rift: -1, resources: { memory: 1, trust: 2 }, chars: { yundohyeon: 4, iseah: 4 } },
