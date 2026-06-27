@@ -142,7 +142,7 @@ function renderBranchLinkCue() {
   if (!el) return;
   const branch = BRANCHES.find((b) => b.id === state.currentBranchId);
   if (!branch) {
-    el.textContent = '연결선 — 아직 열린 분기 없음';
+    el.textContent = '연결선 — 아직 열린 갈래 없음';
     return;
   }
 
@@ -232,8 +232,8 @@ function updateBranchPanel() {
       els.branchStatus.classList.remove('is-echoed');
     } else {
       els.branchStatus.textContent = currentPhase.id === 'A'
-        ? '중간 장면에서 선택이 열린다 — 지금은 예지만 남긴다.'
-        : '마지막 장면이 열렸다 — 중간에 손을 뻗지 못했다.';
+        ? '중간 장면에선 선택이 열려. 지금은 예지만 남겨 둬.'
+        : '마지막 장면이 열렸어. 중간엔 손을 못 뻗었지.';
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     }
@@ -472,7 +472,7 @@ function buildCharacterPanel() {
         </div>
         <div class="char-meta">
           <span class="char-state">${c.alive ? '생존' : '이탈'}</span>
-          <span class="char-hint">${expanded ? '접기' : '탭해서 펼치기'}</span>
+          <span class="char-hint">${expanded ? '접어두기' : '눌러 펼치기'}</span>
         </div>
       </button>
       <div id="char-details-${c.id}" class="char-details" ${expanded ? '' : 'hidden'}>
