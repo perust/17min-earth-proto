@@ -462,7 +462,8 @@ html, body {
 .btn:active { transform: translateY(1px); }
 .btn-primary { background: var(--ghost); color: #04201e; border-color: var(--ghost); font-weight: 600; }
 .btn-rewind { color: var(--warn); border-color: #3a2230; }
-.speed { font-size: 10px; color: var(--text-dim); display: flex; flex-direction: column; gap: 3px; }
+#btn-pause,
+.speed { display: none; }
 .speed select {
   background: var(--panel); color: var(--text);
   border: 1px solid var(--line); border-radius: 6px; padding: 4px; font-size: 11px;

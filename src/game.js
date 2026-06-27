@@ -143,6 +143,18 @@ function showChoiceToast(message, tone = 'good') {
   }, 6000);
 }
 
+function refreshPrimaryActionLabel() {
+  if (!els.btnStart) return;
+  const currentPhase = phaseAt(LOOP_SECONDS - state.time);
+  if (currentPhase.id === 'A') {
+    els.btnStart.textContent = '다음 장면';
+  } else if (currentPhase.id === 'B') {
+    els.btnStart.textContent = state.branchLocked ? '여파 보기' : '다음 장면';
+  } else {
+    els.btnStart.textContent = '다음 루프';
+  }
+}
+
 function renderBranchMemory() {
   const el = els.branchMemory;
   if (!el) return;
@@ -406,9 +418,9 @@ function chooseBranch(branchId) {
   state.branchLocked = true;
   state.currentBranchId = branch.id;
   state.branchCounts[branch.id] = (state.branchCounts[branch.id] ?? 0) + 1;
-  state.running = true;
+  state.running = false;
   state.lastTick = performance.now();
-  els.btnStart.textContent = '진행 중';
+  refreshPrimaryActionLabel();
   // 분기 메모리에 누적 깊이 표식을 붙여, 같은 선택이라도 1/2/3회차가 다르게 읽힌다.
   const depthCount = state.branchCounts[branch.id];
   const depthMark = depthCount >= 3 ? ' ⟳깊음' : depthCount === 2 ? ' ⟳' : '';
@@ -611,6 +623,7 @@ function updateClock() {
   const pct = Math.min(1, Math.max(0, elapsed / LOOP_SECONDS));
   els.timelineCursor.style.left = `calc(${pct * 100}% - 1px)`;
   updateStoryBeat();
+  refreshPrimaryActionLabel();
 }
 
 function updateResources() {
@@ -889,27 +902,27 @@ function advanceTutorial() {
   } else {
     els.tutorialOverlay.hidden = true;
     try { localStorage.setItem(TUTORIAL_KEY, '1'); } catch (e) { /* 저장 불가 환경 무시 */ }
-    state.running = true;
+    state.running = false;
     state.lastTick = performance.now();
-    els.btnStart.textContent = '진행 중';
+    refreshPrimaryActionLabel();
   }
 }
 
 function skipTutorial() {
   els.tutorialOverlay.hidden = true;
   try { localStorage.setItem(TUTORIAL_KEY, '1'); } catch (e) { /* 저장 불가 환경 무시 */ }
-  state.running = true;
+  state.running = false;
   state.lastTick = performance.now();
-  els.btnStart.textContent = '진행 중';
+  refreshPrimaryActionLabel();
 }
 
 function maybeOpenTutorial() {
   let seen = false;
   try { seen = localStorage.getItem(TUTORIAL_KEY) === '1'; } catch (e) { seen = false; }
   if (seen) {
-    state.running = true;
+    state.running = false;
     state.lastTick = performance.now();
-    els.btnStart.textContent = '진행 중';
+    refreshPrimaryActionLabel();
     return;
   }
   tutorialIndex = 0;
@@ -1055,7 +1068,7 @@ function resetLoop() {
   state.branchLocked = false;
   state.currentBranchId = null;
   state.branchAftermathTriggered = false;
-  els.btnStart.textContent = '시작';
+  refreshPrimaryActionLabel();
   pushLog(`루프 ${state.loop - 1} 종료: 기억 조각은 남고, 신뢰는 일부만 계승된다.`);
   // 계승 요약에도 마지막 분기의 숙련 단계를 덧붙여, 같은 분기라도 회차마다 다르게 읽힌다.
   const lastTag = state.branchMemory.slice(-1)[0] ?? '없음';
@@ -1067,37 +1080,40 @@ function resetLoop() {
   updateResources();
 }
 
-function tick(now) {
-  const dt = (now - state.lastTick) / 1000;
-  state.lastTick = now;
-  if (state.running) {
-    state.time -= dt * state.speed;
-    const currentPhase = phaseAt(LOOP_SECONDS - state.time);
-    triggerPhaseDisaster(currentPhase);
-    if (currentPhase.id === 'B' && !state.branchLocked) {
-      state.running = false;
-      els.btnStart.textContent = '선택 대기';
-    }
-    if (!state.branchAftermathTriggered && currentPhase.id === 'C') {
-      applyBranchAftermath(currentPhase);
-      state.branchAftermathTriggered = true;
-      updateResources();
-    }
-    if (state.time <= 0) {
-      state.time = 0;
-      resetLoop();
-    }
+function advanceScene() {
+  if (state.ended) return;
+  const currentPhase = phaseAt(LOOP_SECONDS - state.time);
+  if (currentPhase.id === 'A') {
+    state.time = LOOP_SECONDS - PHASES[1].start;
+    state.branchLocked = false;
+    state.currentBranchId = null;
+    state.branchAftermathTriggered = false;
+    state.disasterTriggered = false;
+    state.lastPhaseId = 'A';
     updateClock();
     updateBranchPanel();
+    updateResources();
+    return;
   }
+  if (currentPhase.id === 'B') {
+    state.time = LOOP_SECONDS - PHASES[2].start;
+    applyBranchAftermath(phaseAt(LOOP_SECONDS - state.time));
+    state.branchAftermathTriggered = true;
+    state.lastPhaseId = 'B';
+    updateClock();
+    updateBranchPanel();
+    updateResources();
+    return;
+  }
+  resetLoop();
+}
+
+function tick(now) {
+  state.lastTick = now;
   requestAnimationFrame(tick);
 }
 
-els.btnStart.addEventListener('click', () => {
-  state.running = true;
-  state.lastTick = performance.now();
-  els.btnStart.textContent = '진행 중';
-});
+els.btnStart.addEventListener('click', advanceScene);
 
 els.btnPause.addEventListener('click', () => {
   state.running = false;
