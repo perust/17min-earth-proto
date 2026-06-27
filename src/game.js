@@ -1,4 +1,4 @@
-import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=2';
+import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=4';
 
 const els = {
   loopCount: document.getElementById('loop-count'),
@@ -85,6 +85,7 @@ const state = {
   branchAftermathTriggered: false,
   phaseEntryAt: 0,
   phaseEntryCue: '',
+  expandedChars: new Set(),
   runs: 0,        // 이전에 완료한 고리(엔딩 도달) 횟수 — 회차 보상/진행도 표시
   runBonus: 0,    // 이번 시작에 적용된 예지 보너스
 };
@@ -231,26 +232,26 @@ function updateBranchPanel() {
       els.branchStatus.classList.remove('is-echoed');
     } else {
       els.branchStatus.textContent = currentPhase.id === 'A'
-        ? '첫 장면이 지나는 중 — 균열이 가라앉아야 개입의 순간이 열린다.'
-        : '마지막 장면이 열렸다 — 중간에 손을 뻗지 못했다. 그 빈 자리의 무게가 폭발로 돌아온다.';
+        ? '중간 장면에서 선택이 열린다 — 지금은 예지만 남긴다.'
+        : '마지막 장면이 열렸다 — 중간에 손을 뻗지 못했다.';
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     }
   }
-  els.branchCard?.classList.toggle('is-hot', chosen);
-  els.branchCard?.classList.toggle('is-live', inB && !chosen);
-  els.branchCard?.classList.toggle('is-echoed', inB && !chosen && state.observedThisLoop);
   if (els.branchButtons) {
-    els.branchButtons.querySelectorAll('button').forEach((button) => {
-      button.disabled = state.branchLocked || !inB;
-      const branchId = button.dataset.branchId;
-      const count = state.branchCounts[branchId] ?? 0;
-      const counter = button.querySelector('.branch-count');
-      if (counter) counter.textContent = `x${count}`;
-      const tier = button.querySelector('.branch-tier');
-      if (tier) tier.textContent = masteryLabel(count);
-      button.classList.toggle('is-chosen', branchId === state.currentBranchId);
-    });
+    els.branchButtons.hidden = !inB;
+    if (inB) {
+      els.branchButtons.querySelectorAll('button').forEach((button) => {
+        button.disabled = state.branchLocked;
+        const branchId = button.dataset.branchId;
+        const count = state.branchCounts[branchId] ?? 0;
+        const counter = button.querySelector('.branch-count');
+        if (counter) counter.textContent = `x${count}`;
+        const tier = button.querySelector('.branch-tier');
+        if (tier) tier.textContent = masteryLabel(count);
+        button.classList.toggle('is-chosen', branchId === state.currentBranchId);
+      });
+    }
   }
 }
 
@@ -455,19 +456,39 @@ function buildTimeline() {
 function buildCharacterPanel() {
   els.charPanel.innerHTML = '';
   state.characters.forEach((c) => {
+    const expanded = state.expandedChars.has(c.id);
     const card = document.createElement('article');
-    card.className = 'char-card';
+    card.className = `char-card ${expanded ? 'is-expanded' : 'is-collapsed'}`;
+    if (!c.alive) card.classList.add('down');
     card.dataset.id = c.id;
     card.innerHTML = `
-      <div class="name">${c.name}</div>
-      <div class="role">${c.role}</div>
-      <div class="char-bond">${c.bond ?? ''}</div>
-      <div class="char-drive">${c.drive ?? ''}</div>
+      <button class="char-card-toggle" type="button" aria-expanded="${expanded ? 'true' : 'false'}" aria-controls="char-details-${c.id}">
+        <div class="char-card-top">
+          <div>
+            <div class="name">${c.name}</div>
+            <div class="role">${c.role}</div>
+          </div>
+          <span class="char-chevron" aria-hidden="true">⌄</span>
+        </div>
+        <div class="char-meta">
+          <span class="char-state">${c.alive ? '생존' : '이탈'}</span>
+          <span class="char-hint">${expanded ? '접기' : '탭해서 펼치기'}</span>
+        </div>
+      </button>
+      <div id="char-details-${c.id}" class="char-details" ${expanded ? '' : 'hidden'}>
+        <div class="char-bond">${c.bond ?? ''}</div>
+        <div class="char-drive">${c.drive ?? ''}</div>
+      </div>
       <div class="trust-row">
         <div class="trust-bar"><i></i></div>
-        <span class="alive">생존</span>
+        <span class="alive">${c.alive ? '생존' : '이탈'}</span>
       </div>
     `;
+    card.querySelector('.char-card-toggle')?.addEventListener('click', () => {
+      if (state.expandedChars.has(c.id)) state.expandedChars.delete(c.id);
+      else state.expandedChars.add(c.id);
+      buildCharacterPanel();
+    });
     els.charPanel.appendChild(card);
   });
 }
@@ -621,14 +642,7 @@ function updateResources() {
     ? `루프 ${state.loop}회차 · ★${state.runs}`
     : `루프 ${state.loop}회차`;
 
-  state.characters.forEach((c) => {
-    const card = els.charPanel.querySelector(`.char-card[data-id="${c.id}"]`);
-    if (!card) return;
-    card.classList.toggle('down', !c.alive);
-    const fill = card.querySelector('.trust-bar > i');
-    fill.style.width = `${clamp(c.trust, 0, 100)}%`;
-    card.querySelector('.alive').textContent = c.alive ? '생존' : '이탈';
-  });
+  buildCharacterPanel();
 
   updateVisionPanel();
   updateBranchPanel();
