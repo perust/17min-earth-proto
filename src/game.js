@@ -189,8 +189,8 @@ function updateBranchPanel() {
     if (inB && !chosen) {
       els.branchStatus.textContent = isBEntry
         ? (state.observedThisLoop
-          ? '이미 보았던 병목이 같은 자리로 돌아온다 — 이번엔 그 장면을 꺾어야 한다. B에서 고른 분기는 C로 이어진다.'
-          : '장면이 바로 여기서 꺾인다 — 군중이 쏟아지기 직전, 선택 하나가 길을 가른다. B에서 고른 분기는 C로 이어진다.')
+          ? '이미 보았던 병목이 같은 자리로 돌아온다 — 이번엔 그 장면을 꺾어야 한다. 중간 장면의 선택은 마지막 장면으로 이어진다.'
+          : '장면이 바로 여기서 꺾인다 — 군중이 쏟아지기 직전, 선택 하나가 길을 가른다. 중간 장면의 선택은 마지막 장면으로 이어진다.')
         : (state.observedThisLoop
           ? '예지로 본 병목이 눈앞에서 다시 열린다 — 이제 단 한 번만 손을 뻗을 수 있다. 고른 길은 다음 고리에도 남는다.'
           : '군중이 쏟아지기 직전이다 — 이 고리에서 단 한 번만 손을 뻗을 수 있다. 고른 길은 다음 고리에도 남는다.');
@@ -202,37 +202,37 @@ function updateBranchPanel() {
       const label = masteryLabel(count);
       const nextLabel = masteryLabel(count + 1);
       const consequenceNote = branch?.id === 'support_yun'
-        ? '사람을 먼저 살린 선택이다. C구간에서 구조의 흔적으로 남는다.'
+        ? '사람을 먼저 살린 선택이다. 마지막 장면에서 구조의 흔적으로 남는다.'
         : branch?.id === 'route_anchor'
-          ? '윤도현의 경로를 먼저 고정한 선택이다. C구간에서 구조의 뼈대로 남는다.'
+          ? '윤도현의 경로를 먼저 고정한 선택이다. 마지막 장면에서 구조의 뼈대로 남는다.'
           : branch?.id === 'signal_lantern'
-            ? '서가람의 신호를 현장에 묶은 선택이다. C구간에서 방향의 기준점으로 남는다.'
+            ? '서가람의 신호를 현장에 묶은 선택이다. 마지막 장면에서 방향의 기준점으로 남는다.'
             : branch?.id === 'protect_seah'
-              ? '기억을 먼저 지킨 선택이다. C구간에서 단서의 결로 남는다.'
+              ? '기억을 먼저 지킨 선택이다. 마지막 장면에서 단서의 결로 남는다.'
               : branch?.id === 'memory_knot'
-                ? '이세아의 기억을 묶어 둔 선택이다. C구간에서 기억의 매듭으로 남는다.'
+                ? '이세아의 기억을 묶어 둔 선택이다. 마지막 장면에서 기억의 매듭으로 남는다.'
                 : branch?.id === 'triage_chain'
-                  ? '윤도현과 이세아를 동시에 살린 선택이다. C구간에서 협업의 경로로 남는다.'
+                  ? '윤도현과 이세아를 동시에 살린 선택이다. 마지막 장면에서 협업의 경로로 남는다.'
                   : branch?.id === 'conserve_foresight'
-                    ? '지연의 빚을 남긴 선택이다. C구간에서 대가로 되돌아온다.'
+                    ? '지연의 빚을 남긴 선택이다. 마지막 장면에서 대가로 되돌아온다.'
                     : branch?.id === 'foresight_burn'
-                      ? '예지를 태워 기억을 쌓은 선택이다. C구간에서 기억의 좌표로 남는다.'
+                      ? '예지를 태워 기억을 쌓은 선택이다. 마지막 장면에서 기억의 좌표로 남는다.'
                       : branch?.id === 'vanguard_push'
-                        ? '신뢰로 앞에 선 선택이다. C구간에서 선두의 경로로 남는다.'
+                        ? '신뢰로 앞에 선 선택이다. 마지막 장면에서 선두의 경로로 남는다.'
                         : branch?.id === 'memory_shield'
-                          ? '기억을 불살라 신뢰를 얻은 선택이다. C구간에서 방패의 빛으로 남는다.'
+                          ? '기억을 불살라 신뢰를 얻은 선택이다. 마지막 장면에서 방패의 빛으로 남는다.'
                           : branch?.id === 'vision_relay'
-                            ? '서가람의 예지를 이세아에게 넘긴 선택이다. C구간에서 기억의 이중 선으로 남는다.'
+                            ? '서가람의 예지를 이세아에게 넘긴 선택이다. 마지막 장면에서 기억의 이중 선으로 남는다.'
                             : branch?.id === 'relay_command'
-                              ? '서가람이 예지로 윤도현을 이끈 선택이다. C구간에서 원격 지휘의 경로로 남는다.'
-                              : '이 선택의 여파가 C구간에서 마저 드러난다.';
-      els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} — ${label} 손길. B→C: ${consequenceNote} 같은 선택이 쌓이면 ${nextLabel}로 익어간다.`;
+                              ? '서가람이 예지로 윤도현을 이끈 선택이다. 마지막 장면에서 원격 지휘의 경로로 남는다.'
+                              : '이 선택의 여파가 마지막 장면에서 마저 드러난다.';
+      els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} — ${label} 손길. 이어지는 여파: ${consequenceNote} 같은 선택이 쌓이면 ${nextLabel}로 익어간다.`;
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     } else {
       els.branchStatus.textContent = currentPhase.id === 'A'
-        ? 'A구간 진행 중 — 균열이 먼저 지나야 개입의 순간이 열린다.'
-        : 'C구간 중, 개입 없이 넘어왔다 — 그 빈 자리의 무게가 폭발로 돌아온다.';
+        ? '첫 장면이 지나는 중 — 균열이 가라앉아야 개입의 순간이 열린다.'
+        : '마지막 장면이 열렸다 — 중간에 손을 뻗지 못했다. 그 빈 자리의 무게가 폭발로 돌아온다.';
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     }
@@ -444,7 +444,7 @@ function buildTimeline() {
     const seg = document.createElement('div');
     seg.className = 'timeline-seg';
     seg.style.width = `${100 / PHASES.length}%`;
-    seg.textContent = phase.id;
+    seg.textContent = phase.shortLabel ?? phase.id;
     seg.title = `${phase.name} · ${formatTime(LOOP_SECONDS - phase.start)} ~ ${formatTime(LOOP_SECONDS - phase.end)}`;
     seg.style.background = idx % 2 === 0 ? 'rgba(47, 212, 200, 0.05)' : 'rgba(255, 93, 93, 0.04)';
     els.timelineTrack.appendChild(seg);
@@ -507,13 +507,13 @@ function updateVisionPanel() {
   const currentPhase = phaseAt(LOOP_SECONDS - state.time);
   if (state.observedThisLoop) {
     els.visionPreview.textContent =
-      '관측 완료: 이미 본 B장면이 돌아온다. 군중 병목이 같은 자리에서 먼저 터지고, 윤도현의 동선 개방이 뒤따른다. 이제는 그 장면을 바꾸는 쪽이 남았다.';
+      '관측 완료: 이미 본 중간 장면이 돌아온다. 군중 병목이 같은 자리에서 먼저 터지고, 윤도현의 동선 개방이 뒤따른다. 이제는 그 장면을 바꾸는 쪽이 남았다.';
   } else if (currentPhase.id === 'A') {
     els.visionPreview.textContent = '아직 관측하지 않음 — 예지를 쓰면 다음 17분의 윤곽이 먼저 드러난다.';
   } else if (currentPhase.id === 'B') {
-    els.visionPreview.textContent = '현재는 B구간. 장면이 열리는 순간이다 — 지금 관측하면 병목의 방향과 첫 비명을 미리 읽을 수 있다.';
+    els.visionPreview.textContent = '지금은 중간 장면. 개입의 순간이 열렸다 — 지금 관측하면 병목의 방향과 첫 비명을 미리 읽을 수 있다.';
   } else {
-    els.visionPreview.textContent = '현재는 C구간. 예지를 쓰면 폭발 직전의 안전한 경로와 남은 사람의 위치를 빠르게 판별할 수 있다.';
+    els.visionPreview.textContent = '지금은 마지막 장면. 예지를 쓰면 폭발 직전의 안전한 경로와 남은 사람의 위치를 빠르게 판별할 수 있다.';
   }
 }
 
@@ -529,8 +529,8 @@ function syncPhaseEntry(currentPhase) {
   if (currentPhase.id === 'B') {
     state.phaseEntryAt = LOOP_SECONDS - state.time;
     state.phaseEntryCue = state.observedThisLoop
-      ? '이미 본 B장면이 같은 자리로 되돌아온다. 이번엔 그 흐름을 꺾어야 한다.'
-      : 'A가 꺾이며 B가 열린다. 군중이 쏟아지기 직전의 장면으로 들어간다.';
+      ? '이미 본 중간 장면이 같은 자리로 되돌아온다. 이번엔 그 흐름을 꺾어야 한다.'
+      : '첫 장면이 지나고 중간 장면이 열린다. 군중이 쏟아지기 직전의 장면으로 들어간다.';
     return;
   }
 
@@ -592,8 +592,8 @@ function updateClock() {
   const isBEntry = currentPhase.id === 'B' && elapsed - state.phaseEntryAt < 5;
   els.phaseName.textContent = isBEntry
     ? (state.observedThisLoop
-      ? 'B. 군중 압사 — 이미 본 장면'
-      : 'B. 군중 압사 — 장면 전환')
+      ? '중간 장면 — 이미 본 흐름이 돌아온다'
+      : '중간 장면 — 지금이 개입의 순간')
     : currentPhase.name;
   const pct = Math.min(1, Math.max(0, elapsed / LOOP_SECONDS));
   els.timelineCursor.style.left = `calc(${pct * 100}% - 1px)`;
@@ -635,7 +635,7 @@ function updateResources() {
   renderBranchMemory();
   renderBranchLinkCue();
   const runCue = state.runBonus > 0 ? ` · 회차 보상 예지 +${state.runBonus}` : '';
-  updateCarryoverSummary(`현재 평균 신뢰 ${averageTrust()}%${runCue} · 분기 여파는 C구간에서 이어진다`);
+  updateCarryoverSummary(`현재 평균 신뢰 ${averageTrust()}%${runCue} · 분기 여파는 마지막 장면에서 이어진다`);
   checkEndState();
 }
 
