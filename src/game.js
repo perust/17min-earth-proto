@@ -175,7 +175,10 @@ function buildBranchButtons() {
     btn.className = 'branch-btn';
     btn.dataset.branchId = branch.id;
     const count = state.branchCounts[branch.id] ?? 0;
-    btn.innerHTML = `<strong>${branch.label} <span class="branch-count">x${count}</span> <span class="branch-tier">${masteryLabel(count)}</span></strong> <span>${branch.desc}</span>`;
+    btn.innerHTML = `
+      <span class="branch-btn-label">${branch.label} <span class="branch-count">x${count}</span> <span class="branch-tier">${masteryLabel(count)}</span></span>
+      <span class="branch-btn-desc">${branch.desc}</span>
+    `;
     btn.addEventListener('click', () => chooseBranch(branch.id));
     els.branchButtons.appendChild(btn);
   });
