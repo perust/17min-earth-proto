@@ -1,4 +1,4 @@
-import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=5';
+import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=6';
 
 const els = {
   loopCount: document.getElementById('loop-count'),
@@ -227,7 +227,7 @@ function updateBranchPanel() {
                             : branch?.id === 'relay_command'
                               ? '서가람이 예지로 윤도현을 이끈 선택이다. 마지막 장면에서 원격 지휘의 경로로 남는다.'
                               : '이 선택의 여파가 마지막 장면에서 마저 드러난다.';
-      els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} — ${label} 손길. 이어지는 여파: ${consequenceNote} 같은 선택이 쌓이면 ${nextLabel}로 익어간다.`;
+      els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} — ${label} 손길. 이어지는 여파: ${consequenceNote} 같은 선택이 쌓이면 ${nextLabel}로 이어진다.`;
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     } else {
@@ -530,9 +530,9 @@ function updateVisionPanel() {
     els.visionPreview.textContent =
       '관측 완료: 이미 본 중간 장면이 돌아온다. 군중 병목이 같은 자리에서 먼저 터지고, 윤도현의 동선 개방이 뒤따른다. 이제는 그 장면을 바꾸는 쪽이 남았다.';
   } else if (currentPhase.id === 'A') {
-    els.visionPreview.textContent = '아직 관측하지 않음 — 예지를 쓰면 다음 17분의 윤곽이 먼저 드러난다.';
+    els.visionPreview.textContent = '아직 관측하지 않음. 예지를 쓰면 다음 17분의 윤곽이 먼저 드러난다.';
   } else if (currentPhase.id === 'B') {
-    els.visionPreview.textContent = '지금은 중간 장면. 개입의 순간이 열렸다 — 지금 관측하면 병목의 방향과 첫 비명을 미리 읽을 수 있다.';
+    els.visionPreview.textContent = '지금은 중간 장면. 관측하면 병목의 방향과 첫 비명이 먼저 보인다.';
   } else {
     els.visionPreview.textContent = '지금은 마지막 장면. 예지를 쓰면 폭발 직전의 안전한 경로와 남은 사람의 위치를 빠르게 판별할 수 있다.';
   }
