@@ -26,6 +26,7 @@ const els = {
   branchLinkCue: document.getElementById('branch-link-cue'),
   carryoverSummary: document.getElementById('carryover-summary'),
   btnStart: document.getElementById('btn-start'),
+  btnSecondary: document.getElementById('btn-secondary'),
   btnPause: document.getElementById('btn-pause'),
   btnReset: document.getElementById('btn-reset'),
   btnVision: document.getElementById('btn-vision'),
@@ -157,6 +158,12 @@ function refreshPrimaryActionLabel() {
   } else {
     els.btnStart.textContent = state.branchLocked ? '여파 정리' : '다음 루프';
   }
+}
+
+function refreshSecondaryActionLabel() {
+  if (!els.btnSecondary) return;
+  const app = document.getElementById('app');
+  els.btnSecondary.textContent = app?.classList.contains('secondary-open') ? '기록 닫기' : '기록';
 }
 
 function renderBranchMemory() {
@@ -1131,6 +1138,13 @@ function tick(now) {
 
 els.btnStart.addEventListener('click', advanceScene);
 
+els.btnSecondary?.addEventListener('click', () => {
+  const app = document.getElementById('app');
+  if (!app) return;
+  app.classList.toggle('secondary-open');
+  refreshSecondaryActionLabel();
+});
+
 els.btnPause.addEventListener('click', () => {
   state.running = false;
   els.btnStart.textContent = '재개';
@@ -1146,7 +1160,9 @@ els.btnReset.addEventListener('click', () => {
   state.currentBranchId = null;
   state.choicePhaseId = null;
   state.branchAftermathTriggered = false;
+  document.getElementById('app')?.classList.remove('secondary-open');
   refreshPrimaryActionLabel();
+  refreshSecondaryActionLabel();
   pushLog('플레이어가 루프를 되감았다. 현재 회차의 상태를 다시 정리한다.');
   updateClock();
   updateResources();
@@ -1177,6 +1193,7 @@ updateCodexButton();
 applyRunReward();
 renderLog();
 renderBranchMemory();
+refreshSecondaryActionLabel();
 updateClock();
 updateResources();
 maybeOpenTutorial();
