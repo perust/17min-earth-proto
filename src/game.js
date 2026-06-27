@@ -36,6 +36,7 @@ const els = {
   tutorialTitle: document.getElementById('tutorial-title'),
   tutorialBody: document.getElementById('tutorial-body'),
   btnTutorialNext: document.getElementById('btn-tutorial-next'),
+  btnTutorialSkip: document.getElementById('btn-tutorial-skip'),
   endingOverlay: document.getElementById('ending-overlay'),
   endingCard: document.getElementById('ending-card'),
   endingTag: document.getElementById('ending-tag'),
@@ -420,6 +421,9 @@ function chooseBranch(branchId) {
   state.branchLocked = true;
   state.currentBranchId = branch.id;
   state.branchCounts[branch.id] = (state.branchCounts[branch.id] ?? 0) + 1;
+  state.running = true;
+  state.lastTick = performance.now();
+  els.btnStart.textContent = '진행 중';
   // 분기 메모리에 누적 깊이 표식을 붙여, 같은 선택이라도 1/2/3회차가 다르게 읽힌다.
   const depthCount = state.branchCounts[branch.id];
   const depthMark = depthCount >= 3 ? ' ⟳깊음' : depthCount === 2 ? ' ⟳' : '';
@@ -885,6 +889,9 @@ function renderTutorialStep() {
   els.tutorialTitle.textContent = step.title;
   els.tutorialBody.innerHTML = step.body; // 정적 신뢰 데이터(<b> 강조 포함)
   els.btnTutorialNext.textContent = tutorialIndex === TUTORIAL_STEPS.length - 1 ? '루프 시작' : '다음';
+  if (els.btnTutorialSkip) {
+    els.btnTutorialSkip.textContent = tutorialIndex === 0 ? '바로 시작' : '건너뛰기';
+  }
 }
 
 function advanceTutorial() {
@@ -894,13 +901,29 @@ function advanceTutorial() {
   } else {
     els.tutorialOverlay.hidden = true;
     try { localStorage.setItem(TUTORIAL_KEY, '1'); } catch (e) { /* 저장 불가 환경 무시 */ }
+    state.running = true;
+    state.lastTick = performance.now();
+    els.btnStart.textContent = '진행 중';
   }
+}
+
+function skipTutorial() {
+  els.tutorialOverlay.hidden = true;
+  try { localStorage.setItem(TUTORIAL_KEY, '1'); } catch (e) { /* 저장 불가 환경 무시 */ }
+  state.running = true;
+  state.lastTick = performance.now();
+  els.btnStart.textContent = '진행 중';
 }
 
 function maybeOpenTutorial() {
   let seen = false;
   try { seen = localStorage.getItem(TUTORIAL_KEY) === '1'; } catch (e) { seen = false; }
-  if (seen) return;
+  if (seen) {
+    state.running = true;
+    state.lastTick = performance.now();
+    els.btnStart.textContent = '진행 중';
+    return;
+  }
   tutorialIndex = 0;
   renderTutorialStep();
   els.tutorialOverlay.hidden = false;
@@ -1063,6 +1086,10 @@ function tick(now) {
     state.time -= dt * state.speed;
     const currentPhase = phaseAt(LOOP_SECONDS - state.time);
     triggerPhaseDisaster(currentPhase);
+    if (currentPhase.id === 'B' && !state.branchLocked) {
+      state.running = false;
+      els.btnStart.textContent = '선택 대기';
+    }
     if (!state.branchAftermathTriggered && currentPhase.id === 'C') {
       applyBranchAftermath(currentPhase);
       state.branchAftermathTriggered = true;
@@ -1112,6 +1139,7 @@ els.speedSelect.addEventListener('change', (e) => {
 
 els.btnEscape?.addEventListener('click', attemptEscape);
 els.btnTutorialNext?.addEventListener('click', advanceTutorial);
+els.btnTutorialSkip?.addEventListener('click', skipTutorial);
 els.btnEndingRestart?.addEventListener('click', () => location.reload());
 
 els.btnCodex?.addEventListener('click', openCodex);
