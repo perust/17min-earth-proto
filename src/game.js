@@ -147,12 +147,12 @@ function renderBranchLinkCue() {
 
   const linkMap = {
     support_yun: '윤도현 지원 ↔ 이세아 보호: 사람을 살리면 기억이 남고, 기억이 남으면 다음 개입이 빨라진다.',
-    route_anchor: '윤도현 경로 고정 ↔ 예지 관측: 방금 연 길을 다시 잡아 다음 C구간의 구조를 더 단단히 묶는다.',
+    route_anchor: '윤도현 경로 고정 ↔ 예지 관측: 방금 연 길을 다시 잡아 다음 마지막 장면의 구조를 더 단단히 묶는다.',
     signal_lantern: '서가람 신호 고정 ↔ 윤도현 경로 고정: 예지가 경로를 비추고, 경로가 예지를 다시 살린다.',
     protect_seah: '이세아 보호 ↔ 윤도현 지원: 기억을 지키면 구조가 또렷해지고, 구조가 또렷해지면 길이 열리기 쉽다.',
     memory_knot: '이세아 기억 매듭 ↔ 기억 보존: 이름을 더 단단히 묶을수록 다음 루프에서 같은 길을 더 쉽게 읽는다.',
     triage_chain: '윤도현 이세아 동시 구조 ↔ 서가람 신호 고정: 구조와 기억이 같이 묶일수록 다음 장면의 좌표가 선명해진다.',
-    conserve_foresight: '예지 보존 ↔ 두 분기: 지금 아낀 만큼 C구간의 대가가 커지고, 다음 루프의 선택 폭은 더 좁아진다.',
+    conserve_foresight: '예지 보존 ↔ 두 분기: 지금 아낀 만큼 마지막 장면의 대가가 커지고, 다음 루프의 선택 폭은 더 좁아진다.',
     foresight_burn: '서가람 예지 집중 ↔ 서가람 신호 고정: 예지를 태울수록 기억이 쌓이고, 쌓인 기억은 다음 루프의 예지를 아끼는 발판이 된다.',
     vanguard_push: '윤도현 선두 이끌기 ↔ 윤도현 밀어주기: 선두로 열어낸 길에 물자까지 더하면 병목이 두 겹으로 풀린다.',
     memory_shield: '이세아 기억 방패 ↔ 이세아 기억 매듭: 기억을 불살라 신뢰를 얻고, 매듭으로 기억을 다시 묶으면 잃은 만큼이 채워진다.',
@@ -162,7 +162,7 @@ function renderBranchLinkCue() {
   const count = state.branchCounts[branch.id] ?? 0;
   const depth = count > 0 ? ` · ${masteryLabel(count)} 누적` : '';
   const loopEcho = state.loop > 1 ? ` · ${state.loop}회차 누적` : '';
-  el.textContent = `연결선 — ${linkMap[branch.id] ?? '이 분기는 C구간과 다음 루프에 여파를 남긴다.'}${depth}${loopEcho}`;
+  el.textContent = `연결선 — ${linkMap[branch.id] ?? '이 분기는 마지막 장면과 다음 루프에 여파를 남긴다.'}${depth}${loopEcho}`;
 }
 
 function buildBranchButtons() {
@@ -913,8 +913,8 @@ function applyDisasterImpact() {
 
   pushLog(
     observed
-      ? 'B구간 예지: 군중 병목을 읽어 피해를 줄였다. 예지 1을 쓰고, 신뢰 손실을 최소화했다.'
-      : 'B구간 압사: 예지 없이 돌입해 신뢰와 집중력이 흔들렸다. 다음 루프에서 관측이 필요하다.'
+      ? '중간 장면 예지: 군중 병목을 읽어 피해를 줄였다. 예지 1을 쓰고, 신뢰 손실을 최소화했다.'
+      : '중간 장면 압사: 예지 없이 돌입해 신뢰와 집중력이 흔들렸다. 다음 루프에서 관측이 필요하다.'
   );
 }
 
@@ -924,7 +924,7 @@ function applyBranchAftermath(currentPhase) {
   // 분기를 아예 고르지 않은 루프도 C구간에 고유한 결을 남긴다(개입 부재의 대가).
   if (!branchId) {
     state.rift = clamp(state.rift + 3, 0, BALANCE.riftThreshold);
-    pushLog('분기 없는 루프: 손을 뻗지 못한 대가가 C구간 폭발과 함께 한 번에 되돌아왔다.'
+    pushLog('분기 없는 루프: 손을 뻗지 못한 대가가 마지막 장면 폭발과 함께 한 번에 되돌아왔다.'
       + (BRANCH_AFTERMATH_RIDERS[aftermathRiderKey()] ?? ''));
     return;
   }
@@ -991,7 +991,7 @@ function triggerPhaseDisaster(currentPhase) {
   if (currentPhase.id !== 'B' || state.disasterTriggered) return;
   state.disasterTriggered = true;
   if (!state.branchLocked) {
-    pushLog('B구간 분기 미선택: 작은 선택이 늦어져 기본 피해가 발생했다.');
+    pushLog('중간 장면 미선택: 작은 선택이 늦어져 기본 피해가 발생했다.');
   }
   applyDisasterImpact();
   updateResources();
@@ -1003,7 +1003,7 @@ function observeFuture() {
   state.resources.foresight -= 1;
   state.resources.memory += 1;
   state.observedThisLoop = true;
-  pushLog('예지 관측: B구간의 군중 병목과 윤도현의 동선 개방이 먼저 보였다. 이제 그 장면을 바꿀 한 번의 손길만 남았다.');
+  pushLog('예지 관측: 중간 장면의 군중 병목과 윤도현의 동선 개방이 먼저 보였다. 이제 그 장면을 바꿀 한 번의 손길만 남았다.');
   updateResources();
 }
 
