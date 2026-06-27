@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0a0e14" />
   <title>17분 후의 지구 — 프로토타입</title>
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
   <!-- 모바일 세로(portrait) 고정 프레임 -->
@@ -48,11 +48,11 @@
         <div class="branch-card" aria-label="개입 선택 카드">
           <div class="branch-head">
             <span class="branch-title">장면 개입</span>
-            <span class="branch-note">세 갈래의 개입 중 하나를 골라 흐름을 바꾼다</span>
           </div>
           <div id="branch-buttons" class="branch-buttons"></div>
           <div id="branch-status" class="branch-status">개입이 열리면 세 갈래 중 하나를 고를 수 있다</div>
         </div>
+        <div id="choice-toast" class="choice-toast" role="status" aria-live="polite" hidden></div>
         <div id="escape-card" class="escape-card" hidden>
           <div class="escape-glow">진원 해금</div>
           <p class="escape-line">기억 조각이 진원의 좌표를 그렸다. 이제 고리를 끊을 수 있다.</p>
@@ -140,6 +140,6 @@
     </div>
   </div>
 
-  <script type="module" src="src/game.js?v=21"></script>
+  <script type="module" src="src/game.js?v=23"></script>
 </body>
 </html>

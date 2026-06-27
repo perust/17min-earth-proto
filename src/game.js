@@ -21,7 +21,7 @@ const els = {
   visionCost: document.getElementById('vision-cost'),
   branchButtons: document.getElementById('branch-buttons'),
   branchStatus: document.getElementById('branch-status'),
-  branchMemory: document.getElementById('branch-memory'),
+  choiceToast: document.getElementById('choice-toast'),
   branchLinkCue: document.getElementById('branch-link-cue'),
   carryoverSummary: document.getElementById('carryover-summary'),
   btnStart: document.getElementById('btn-start'),
@@ -95,6 +95,7 @@ const state = {
 
 // 자원 값이 바뀔 때만 HUD 숫자에 bump 피드백을 주기 위한 직전 값 캐시
 const lastResVals = {};
+let choiceToastTimer = null;
 
 function pad(n) {
   return String(n).padStart(2, '0');
@@ -129,6 +130,17 @@ function pushLog(text, tone = logTone(text)) {
   state.observationLog.unshift({ text, tone });
   state.observationLog = state.observationLog.slice(0, 5);
   renderLog();
+}
+
+function showChoiceToast(message, tone = 'good') {
+  if (!els.choiceToast) return;
+  if (choiceToastTimer) clearTimeout(choiceToastTimer);
+  els.choiceToast.hidden = false;
+  els.choiceToast.className = `choice-toast tone-${tone}`;
+  els.choiceToast.textContent = message;
+  choiceToastTimer = setTimeout(() => {
+    if (els.choiceToast) els.choiceToast.hidden = true;
+  }, 6000);
 }
 
 function renderBranchMemory() {
@@ -175,12 +187,10 @@ function buildBranchButtons() {
   BRANCHES.filter((branch) => VISIBLE_BRANCH_IDS.includes(branch.id)).forEach((branch) => {
     const btn = document.createElement('button');
     btn.className = 'branch-btn';
+    btn.type = 'button';
     btn.dataset.branchId = branch.id;
-    const count = state.branchCounts[branch.id] ?? 0;
-    btn.innerHTML = `
-      <span class="branch-btn-label">${branch.label} <span class="branch-count">x${count}</span> <span class="branch-tier">${masteryLabel(count)}</span></span>
-      <span class="branch-btn-desc">${branch.desc}</span>
-    `;
+    btn.textContent = branch.label;
+    btn.title = branch.desc;
     btn.addEventListener('click', () => chooseBranch(branch.id));
     els.branchButtons.appendChild(btn);
   });
@@ -195,51 +205,17 @@ function updateBranchPanel() {
   if (els.branchStatus) {
     if (inB && !chosen) {
       els.branchStatus.textContent = isBEntry
-        ? (state.observedThisLoop
-          ? '이미 보았던 병목이 같은 자리로 돌아온다 — 이번엔 그 흐름을 꺾어야 한다. 한 번의 개입이 다음 국면까지 남는다.'
-          : '장면이 바로 여기서 꺾인다 — 군중이 쏟아지기 직전, 선택 하나가 길을 가른다. 한 번 고른 흐름은 다음 국면으로 이어진다.')
-        : (state.observedThisLoop
-          ? '예지로 본 병목이 눈앞에서 다시 열린다 — 이제 단 한 번만 손을 뻗을 수 있다. 고른 길은 다음 고리에도 남는다.'
-          : '군중이 쏟아지기 직전이다 — 이 고리에서 단 한 번만 손을 뻗을 수 있다. 고른 길은 다음 고리에도 남는다.');
+        ? (state.observedThisLoop ? '이미 본 병목' : '지금 선택')
+        : '지금 선택';
       els.branchStatus.classList.add('is-live');
       els.branchStatus.classList.toggle('is-echoed', state.observedThisLoop && isBEntry);
     } else if (chosen) {
       const branch = BRANCHES.find((b) => b.id === state.currentBranchId);
-      const count = branch ? (state.branchCounts[branch.id] ?? 0) : 0;
-      const label = masteryLabel(count);
-      const nextLabel = masteryLabel(count + 1);
-      const consequenceNote = branch?.id === 'support_yun'
-        ? '사람을 먼저 살린 선택이다. 여파 국면에서 구조의 흔적으로 남는다.'
-        : branch?.id === 'route_anchor'
-          ? '윤도현의 경로를 먼저 고정한 선택이다. 여파 국면에서 구조의 뼈대로 남는다.'
-          : branch?.id === 'signal_lantern'
-            ? '서가람의 신호를 현장에 묶은 선택이다. 여파 국면에서 방향의 기준점으로 남는다.'
-            : branch?.id === 'protect_seah'
-              ? '기억을 먼저 지킨 선택이다. 여파 국면에서 단서의 결로 남는다.'
-              : branch?.id === 'memory_knot'
-                ? '이세아의 기억을 묶어 둔 선택이다. 여파 국면에서 기억의 매듭으로 남는다.'
-                : branch?.id === 'triage_chain'
-                  ? '윤도현과 이세아를 동시에 살린 선택이다. 여파 국면에서 협업의 경로로 남는다.'
-                  : branch?.id === 'conserve_foresight'
-                    ? '지연의 빚을 남긴 선택이다. 여파 국면에서 대가로 되돌아온다.'
-                    : branch?.id === 'foresight_burn'
-                      ? '예지를 태워 기억을 쌓은 선택이다. 여파 국면에서 기억의 좌표로 남는다.'
-                      : branch?.id === 'vanguard_push'
-                        ? '신뢰로 앞에 선 선택이다. 여파 국면에서 선두의 경로로 남는다.'
-                        : branch?.id === 'memory_shield'
-                          ? '기억을 불살라 신뢰를 얻은 선택이다. 여파 국면에서 방패의 빛으로 남는다.'
-                          : branch?.id === 'vision_relay'
-                            ? '서가람의 예지를 이세아에게 넘긴 선택이다. 여파 국면에서 기억의 이중 선으로 남는다.'
-                            : branch?.id === 'relay_command'
-                              ? '서가람이 예지로 윤도현을 이끈 선택이다. 여파 국면에서 원격 지휘의 경로로 남는다.'
-                              : '이 선택의 여파가 여파 국면에서 마저 드러난다.';
-      els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} — ${label} 손길. 이어지는 여파: ${consequenceNote} 같은 선택이 쌓이면 ${nextLabel}로 이어진다.`;
+      els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} 선택됨`;
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     } else {
-      els.branchStatus.textContent = currentPhase.id === 'A'
-        ? '지금은 개입이 열려 있지 않다. 예지만 남겨 두자.'
-        : '지금은 개입이 닫혀 있다. 이미 흐름이 다른 국면으로 넘어갔다.';
+      els.branchStatus.textContent = currentPhase.id === 'A' ? '개입 대기' : '개입 종료';
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     }
@@ -438,6 +414,8 @@ function chooseBranch(branchId) {
   const depthMark = depthCount >= 3 ? ' ⟳깊음' : depthCount === 2 ? ' ⟳' : '';
   state.branchMemory.push(`${branch.memoryTag}${depthMark}`);
   state.branchMemory = state.branchMemory.slice(-6);
+
+  showChoiceToast(`${branch.label} · ${fail ? '선택 실패' : '선택 완료'}`, fail ? 'danger' : 'good');
 
   const tier = aftermathTier(branch.id);
   if (fail) {
