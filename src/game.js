@@ -242,20 +242,24 @@ function updateBranchPanel() {
       els.branchStatus.classList.remove('is-echoed');
     }
   }
+  if (els.branchCard) {
+    els.branchCard.classList.toggle('is-waiting', !inB && !state.branchLocked);
+  }
   if (els.branchButtons) {
-    els.branchButtons.hidden = !inB;
-    if (inB) {
-      els.branchButtons.querySelectorAll('button').forEach((button) => {
-        button.disabled = state.branchLocked;
-        const branchId = button.dataset.branchId;
-        const count = state.branchCounts[branchId] ?? 0;
-        const counter = button.querySelector('.branch-count');
-        if (counter) counter.textContent = `x${count}`;
-        const tier = button.querySelector('.branch-tier');
-        if (tier) tier.textContent = masteryLabel(count);
-        button.classList.toggle('is-chosen', branchId === state.currentBranchId);
-      });
-    }
+    els.branchButtons.hidden = false;
+    els.branchButtons.querySelectorAll('button').forEach((button) => {
+      const branchId = button.dataset.branchId;
+      const count = state.branchCounts[branchId] ?? 0;
+      const counter = button.querySelector('.branch-count');
+      if (counter) counter.textContent = `x${count}`;
+      const tier = button.querySelector('.branch-tier');
+      if (tier) tier.textContent = masteryLabel(count);
+      button.classList.toggle('is-chosen', branchId === state.currentBranchId);
+      button.disabled = state.branchLocked || !inB;
+      button.title = inB
+        ? '지금 선택 가능'
+        : '중간 장면에 도달하면 선택할 수 있다';
+    });
   }
 }
 

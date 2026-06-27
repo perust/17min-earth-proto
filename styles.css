@@ -230,6 +230,12 @@ html, body {
   background: rgba(18, 25, 37, 0.9);
   text-align: left;
 }
+.branch-card.is-waiting {
+  border-color: rgba(124, 138, 160, .4);
+  background: linear-gradient(180deg, rgba(18, 25, 37, .84), rgba(10, 14, 20, .92));
+}
+.branch-card.is-waiting .branch-buttons { opacity: .68; }
+.branch-card.is-waiting .branch-status { color: var(--text-dim); }
 .branch-head {
   display: flex;
   flex-direction: column;
