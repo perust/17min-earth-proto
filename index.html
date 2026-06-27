@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0e14" />
+  <title>17분 후의 지구 — 프로토타입</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 모바일 세로(portrait) 고정 프레임 -->
+  <div id="app" class="phone-frame">
+
+    <!-- 3차 계층(메타): 루프 회차 / 균열 게이지 -->
+    <header id="meta-bar" class="meta-bar">
+      <span id="loop-count" class="meta-loop">루프 0회차</span>
+      <div class="rift" title="균열 확장 게이지(메인 패배 조건)">
+        <span class="rift-label">균열</span>
+        <div class="rift-track"><div id="rift-fill" class="rift-fill"></div></div>
+        <span id="rift-value" class="rift-value">0/100</span>
+      </div>
+      <button id="btn-codex" class="meta-codex" aria-label="엔딩 도감 열기" title="엔딩 도감 — 해금한 결말 보기">
+        <span class="meta-codex-icon" aria-hidden="true">✦</span>
+        <span id="codex-count" class="meta-codex-count">0/9</span>
+      </button>
+    </header>
+
+    <!-- 시나리오 로그라인: 전제·세 사람·목표를 한 줄로 전달 -->
+    <div class="scenario-logline">지층이 갈라지고 불이 꺼진다. <b>서가람</b>은 예지로 붕괴를 먼저 읽고, <b>윤도현</b>은 경로를 열며, <b>이세아</b>는 기억 조각을 붙든다 — 17분 뒤 세계는 되감긴다.</div>
+
+    <!-- 2차 계층(개입 계획): 3인 NPC 패널 -->
+    <section id="char-panel" class="char-panel" aria-label="등장인물 패널"></section>
+
+    <!-- 게임 플레이 영역 (스테이지 플레이스홀더) -->
+    <main id="stage" class="stage">
+      <div class="stage-placeholder">
+        <div class="clock" id="loop-clock">00:00</div>
+        <div class="clock-sub">/ 17:00 · <span id="phase-name">A. 균열·정전</span></div>
+        <div id="story-beat" class="story-beat" aria-live="polite"></div>
+        <div class="vision-card" aria-label="예지 관측 패널">
+          <div class="vision-head">
+            <span class="vision-title">미래 관측</span>
+            <span id="vision-cost" class="vision-cost">예지 1</span>
+          </div>
+          <div id="vision-preview" class="vision-preview">아직 관측하지 않음</div>
+          <button id="btn-vision" class="btn btn-vision">미래 보기</button>
+        </div>
+        <div class="branch-card" aria-label="B구간 분기 선택">
+          <div class="branch-head">
+            <span class="branch-title">장면 개입</span>
+            <span class="branch-note">B구간에서 한 번만, 고른 길이 C구간과 다음 루프로 이어진다</span>
+          </div>
+          <div id="branch-buttons" class="branch-buttons"></div>
+          <div id="branch-status" class="branch-status">B구간에서만 선택 가능</div>
+        </div>
+        <div id="escape-card" class="escape-card" hidden>
+          <div class="escape-glow">진원 해금</div>
+          <p class="escape-line">기억 조각이 진원의 좌표를 그렸다. 이제 고리를 끊을 수 있다.</p>
+          <button id="btn-escape" class="btn btn-escape">진원 진입 — 고리를 끊는다</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 타임라인 바: 17분을 3구간으로 분절 -->
+    <section class="timeline" aria-label="17분 타임라인">
+      <div id="timeline-track" class="timeline-track">
+        <div id="timeline-cursor" class="timeline-cursor"></div>
+      </div>
+    </section>
+
+    <!-- 1차 계층(즉시 판단): 자원 HUD -->
+    <section id="resource-hud" class="resource-hud" aria-label="자원 HUD"></section>
+
+    <section class="log-panel" aria-label="예지 로그">
+      <div class="log-title">최근 관측</div>
+      <ul id="observation-log" class="observation-log"></ul>
+    </section>
+
+    <section class="carry-panel" aria-label="계승 규칙">
+      <span id="carryover-summary">다음 고리엔 기억 조각·신뢰가 남고, 예지·집중력·확보 물자는 다시 채운다 — B의 선택은 C의 여파로 이어진다</span>
+      <div id="branch-memory" class="branch-memory" title="과거 루프의 미시 선택이 누적되는 분기 메모리">분기 메모리 — 아직 선택 없음</div>
+      <div id="branch-link-cue" class="branch-link-cue">연결선 — 아직 열린 분기 없음</div>
+    </section>
+
+    <!-- 루프 제어 (프로토타입용) -->
+    <footer class="controls">
+      <button id="btn-start" class="btn btn-primary">시작</button>
+      <button id="btn-pause" class="btn">일시정지</button>
+      <button id="btn-reset" class="btn btn-rewind">되감김</button>
+      <label class="speed">
+        속도
+        <select id="speed-select">
+          <option value="1">1× (실시간 17분)</option>
+          <option value="10">10×</option>
+          <option value="60" selected>60× (≈17초)</option>
+        </select>
+      </label>
+    </footer>
+
+    <!-- 첫 플레이 온보딩 오버레이 (루프·예지·분기 메모리 학습) -->
+    <div id="tutorial-overlay" class="overlay" hidden>
+      <div class="overlay-card tutorial-card">
+        <div class="overlay-icon" id="tutorial-icon">◷</div>
+        <div class="overlay-step" id="tutorial-step">1 / 3</div>
+        <h2 class="overlay-title" id="tutorial-title"></h2>
+        <p class="overlay-body" id="tutorial-body"></p>
+        <button id="btn-tutorial-next" class="btn btn-primary overlay-btn">다음</button>
+      </div>
+    </div>
+
+    <!-- 엔딩 오버레이 (붕괴 / 동반 해방 / 고독 / 진실 / 회차) -->
+    <div id="ending-overlay" class="overlay" hidden>
+      <div id="ending-card" class="overlay-card ending-card">
+        <div class="ending-kicker">엔딩 카드</div>
+        <div class="ending-tag" id="ending-tag"></div>
+        <h2 class="overlay-title" id="ending-title"></h2>
+        <p class="ending-atmos" id="ending-atmos"></p>
+        <p class="overlay-body" id="ending-line"></p>
+        <p class="ending-summary-label">이번 고리 기록</p>
+        <dl id="ending-summary" class="ending-summary" aria-label="이번 고리 기록 요약"></dl>
+        <p class="ending-hint" id="ending-hint"></p>
+        <button id="btn-ending-restart" class="btn btn-primary overlay-btn">결말을 닫고, 새 고리로 →</button>
+      </div>
+    </div>
+
+    <!-- 엔딩 도감(코덱스): 해금한 결말 목록 -->
+    <div id="codex-overlay" class="overlay" hidden>
+      <div class="overlay-card codex-card">
+        <div class="codex-head">
+          <div class="codex-heading">
+            <h2 class="overlay-title codex-title">엔딩 도감</h2>
+            <p id="codex-sub" class="codex-sub">고리가 닿은 결말이 여기에 새겨진다</p>
+          </div>
+          <span id="codex-progress" class="codex-progress">0 / 5</span>
+        </div>
+        <ul id="codex-list" class="codex-list" aria-label="엔딩 목록"></ul>
+        <button id="btn-codex-close" class="btn overlay-btn">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="src/game.js?v=10"></script>
+</body>
+</html>
