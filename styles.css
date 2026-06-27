@@ -435,18 +435,162 @@ html, body {
 }
 
 @media (max-width: 459px) {
+  .meta-bar {
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .meta-loop,
+  .rift-label,
+  .rift-value,
+  .meta-codex {
+    font-size: 10px;
+  }
+  .meta-codex {
+    padding: 4px 8px;
+    gap: 4px;
+  }
+  .scenario-logline {
+    display: none;
+  }
+  .char-panel {
+    gap: 4px;
+    padding: 6px 8px 2px;
+  }
+  .char-card {
+    padding: 5px;
+    border-radius: 8px;
+  }
+  .char-card .name { font-size: 12px; }
+  .char-card .role { font-size: 8px; line-height: 1.2; }
+  .char-card .char-meta,
+  .char-card .trust-row,
+  .char-card .char-hint {
+    display: none;
+  }
+  .char-details {
+    margin-top: 4px;
+    padding-top: 4px;
+  }
+  .char-card .char-bond,
+  .char-card .char-drive {
+    font-size: 8px;
+    line-height: 1.25;
+  }
+  .stage {
+    padding: 4px 0 6px;
+    align-items: flex-start;
+  }
+  .stage-placeholder {
+    width: 100%;
+    display: grid;
+    gap: 4px;
+    justify-items: center;
+    padding: 0 10px;
+  }
+  .clock {
+    font-size: 38px;
+    line-height: .9;
+  }
+  .clock-sub {
+    margin-top: 0;
+    font-size: 11px;
+  }
+  .story-beat {
+    display: none;
+  }
+  .vision-card {
+    margin-top: 8px;
+    width: min(94%, 360px);
+    padding: 8px;
+  }
+  .vision-title,
+  .branch-title { font-size: 12px; }
+  .vision-cost { font-size: 10px; }
+  .vision-preview {
+    min-height: 28px;
+    margin-top: 4px;
+    padding: 6px;
+    font-size: 10px;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .btn-vision {
+    margin-top: 6px;
+    padding: 7px 0;
+    font-size: 11px;
+  }
+  .branch-card {
+    margin-top: 8px;
+    width: min(94%, 360px);
+    padding: 8px;
+  }
+  .branch-head {
+    gap: 2px;
+  }
+  .branch-note {
+    display: none;
+  }
+  .branch-buttons {
+    margin-top: 5px;
+    gap: 4px;
+  }
+  .branch-btn {
+    padding: 6px 8px;
+    font-size: 10px;
+    gap: 1px;
+  }
+  .branch-btn-label {
+    font-size: 11px;
+    line-height: 1.15;
+  }
+  .branch-btn-desc {
+    display: none;
+  }
+  .branch-status {
+    margin-top: 4px;
+    font-size: 8px;
+    line-height: 1.15;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .timeline {
+    padding: 8px 10px 4px;
+  }
+  .timeline-track {
+    height: 18px;
+  }
+  .resource-hud {
+    gap: 4px;
+    padding: 6px 10px;
+  }
+  .res {
+    padding: 5px 2px;
+    border-radius: 7px;
+  }
+  .res .res-val { font-size: 14px; }
+  .res .res-name { font-size: 8px; line-height: 1.1; }
+  .log-panel,
+  .carry-panel {
+    display: none;
+  }
   .controls {
-    padding: 8px 10px max(10px, env(safe-area-inset-bottom));
-    gap: 6px;
+    padding: 7px 8px max(8px, env(safe-area-inset-bottom));
+    gap: 5px;
   }
   .btn {
-    padding: 10px 0;
-    font-size: 12px;
+    padding: 9px 0;
+    font-size: 11px;
   }
-  .speed { font-size: 9px; }
-  .speed select { font-size: 10px; }
-  .log-panel { margin: 0 10px 6px; padding: 9px 9px 7px; }
-  .carry-panel { padding: 0 10px 6px; }
+  .speed { font-size: 8px; }
+  .speed select {
+    font-size: 9px;
+    padding: 3px;
+  }
 }
 
 /* ── 분기 카드 연출(레이아웃 유지, 반응만 강화) ───────────── */

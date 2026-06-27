@@ -540,19 +540,18 @@ function updateVisionPanel() {
 
   const currentPhase = phaseAt(LOOP_SECONDS - state.time);
   if (state.observedThisLoop) {
-    els.visionPreview.textContent =
-      '관측 완료: 이미 본 병목이 돌아온다. 군중이 같은 자리에서 먼저 터지고, 윤도현의 동선 개방이 뒤따른다. 이제는 그 흐름을 바꾸는 쪽이 남았다.';
+    els.visionPreview.textContent = '관측 완료: 같은 병목이 다시 열린다. 이제 흐름을 바꿀 차례다.';
   } else if (currentPhase.id === 'A') {
-    els.visionPreview.textContent = '아직 관측하지 않음. 예지를 쓰면 다음 17분의 윤곽이 먼저 드러난다.';
+    els.visionPreview.textContent = '아직 관측 전. 예지를 쓰면 다음 17분의 윤곽이 드러난다.';
   } else if (currentPhase.id === 'B') {
-    els.visionPreview.textContent = '지금은 개입 직전의 흐름이다. 관측하면 병목의 방향과 첫 비명이 먼저 보인다.';
+    els.visionPreview.textContent = '개입 직전. 관측하면 병목과 첫 비명이 먼저 보인다.';
   } else {
-    els.visionPreview.textContent = '지금은 여파 국면. 예지를 쓰면 폭발 직전의 안전한 경로와 남은 사람의 위치를 빠르게 판별할 수 있다.';
+    els.visionPreview.textContent = '여파 국면. 관측하면 안전 경로와 남은 사람 위치를 빠르게 읽는다.';
   }
 }
 
 function updateCarryoverSummary(extra = '') {
-  const base = '계승: 기억 조각·신뢰 / 초기화: 예지·집중력·확보 물자 · 이번 개입의 여파는 다음 국면으로 이어진다';
+  const base = '계승: 기억·신뢰 / 초기화: 예지·집중·물자';
   els.carryoverSummary.textContent = extra ? `${base} · ${extra}` : base;
 }
 
