@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#0a0e14" />
   <title>17분 후의 지구 — 프로토타입</title>
-  <link rel="stylesheet" href="styles.css?v=6" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <!-- 모바일 세로(portrait) 고정 프레임 -->
@@ -26,7 +26,7 @@
     </header>
 
     <!-- 시나리오 로그라인: 전제·세 사람·목표를 한 줄로 전달 -->
-    <div class="scenario-logline">정전이 도시를 삼키고 지층이 갈라진다. <b>서가람</b>은 붕괴를 먼저 읽고, <b>윤도현</b>은 길을 열며, <b>이세아</b>는 이름이 끊기기 전에 붙든다.</div>
+    <div class="scenario-logline">정전이 도시를 삼킨다. <b>서가람</b>은 붕괴를 읽고, <b>윤도현</b>은 무언가를 숨긴 채 길을 열고, <b>이세아</b>는 이름 뒤의 빚을 붙든다.</div>
 
     <!-- 2차 계층(개입 계획): 3인 NPC 패널 -->
     <section id="char-panel" class="char-panel" aria-label="등장인물 패널"></section>
@@ -56,7 +56,7 @@
         <div id="choice-toast" class="choice-toast" role="status" aria-live="polite" hidden></div>
         <div id="escape-card" class="escape-card" hidden>
           <div class="escape-glow">진원 해금</div>
-          <p class="escape-line">기억 조각이 진원의 좌표를 그렸다. 이제 고리를 끊을 수 있다.</p>
+          <p class="escape-line">기억 조각이 진원 좌표를 그렸다. 이제 고리를 끊는다.</p>
           <button id="btn-escape" class="btn btn-escape">진원 진입 — 고리를 끊는다</button>
         </div>
       </div>
@@ -93,7 +93,7 @@
     </section>
 
     <section class="carry-panel" aria-label="계승 규칙">
-      <span id="carryover-summary">다음 고리엔 기억 조각·신뢰가 남고, 예지·집중력·확보 물자는 다시 채운다 — 이번 개입의 여파는 다음 국면으로 이어진다</span>
+      <span id="carryover-summary">다음 고리엔 기억 조각·신뢰만 남고, 예지·집중력·확보 물자는 다시 채운다. 여파와 비밀은 다음 국면으로 이어진다.</span>
       <div id="branch-memory" class="branch-memory" title="과거 루프의 미시 선택이 누적되는 분기 메모리">분기 메모리 — 아직 선택 없음</div>
       <div id="branch-link-cue" class="branch-link-cue">연결선 — 아직 갈래가 없어</div>
     </section>
@@ -142,6 +142,6 @@
     </div>
   </div>
 
-  <script type="module" src="src/game.js?v=23"></script>
+  <script type="module" src="src/game.js?v=25"></script>
 </body>
 </html>
