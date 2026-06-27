@@ -20,21 +20,21 @@ export const CHARACTERS = [
   {
     id: 'seogaram', name: '서가람', role: '예지 관측자',
     bond: '윤도현을 보고 타이밍을 재다',
-    drive: '보면서 못 막는 것이 두렵다',
+    drive: '막지 못하는 걸 보는 게 두렵다',
     linkedResources: ['foresight', 'focus'],
     trust: 50, alive: true,
   },
   {
     id: 'yundohyeon', name: '윤도현', role: '경로 실행자',
     bond: '서가람 예지만 믿고 달린다',
-    drive: '닿는 곳엔 아무도 안 잃는다',
+    drive: '닿는 곳에선 누구도 잃지 않는다',
     linkedResources: ['supply', 'trust'],
     trust: 50, alive: true,
   },
   {
     id: 'iseah', name: '이세아', role: '기억 계승자',
-    bond: '서가람이 버텨야 기억도 잇는다',
-    drive: '기억을 모아야만 고리가 끊긴다',
+    bond: '서가람이 버텨야 기억도 이어진다',
+    drive: '기억을 모아 고리를 끊을 수 있다',
     linkedResources: ['memory', 'trust'],
     trust: 50, alive: true,
   },
@@ -91,7 +91,7 @@ export const ENDINGS = {
     id: 'escape_together', tone: 'good', tag: 'GOOD END · 동반 해방',
     title: '셋이서, 바깥으로',
     atmos: '— 기록 종료 · 함께 빠져나온 순간 —',
-    line: '기억이 좌표가 되고 신뢰가 문이 됐다. 서로 이어 붙인 선택들이 맞물린 채, 세 사람은 처음으로 루프의 바깥으로 함께 걸어 나온다.',
+    line: '기억은 좌표가 되고, 신뢰는 문이 됐다. 서로 이어 붙인 선택들이 맞물려, 세 사람은 처음으로 루프 바깥으로 함께 걸어 나온다.',
     hint: '기억 8 이상과 충분한 신뢰가 진실 엔딩의 문턱이다. 함께였기에 열린 출구를 기억하라.',
   },
   escape_route: {
@@ -140,7 +140,7 @@ export const ENDINGS = {
     id: 'escape_archive', tone: 'bittersweet', tag: 'NG+ · 회차 증언',
     title: '반복이 남긴 증거',
     atmos: '— 기록 종료 · 반복이 증언이 되는 순간 —',
-    line: '두 번째 고리에서 쌓인 흔적이 서로를 붙잡았다. 갈라진 분기들이 하나의 기록으로 이어지고, 세 사람은 이 재난을 처음으로 기록한 채 — 루프 바깥으로 한 발 더 나아간다.',
+    line: '두 번째 고리에서 쌓인 흔적이 서로를 붙잡았다. 갈라진 분기들이 하나의 기록으로 이어지고, 세 사람은 이 재난을 기록한 채 루프 바깥으로 한 발 더 나아간다.',
     hint: '반복으로 쌓인 흔적, 예지 보너스, 기억과 신뢰. 그 세 겹이 맞아떨어질 때만 열리는 반복의 결말이다.',
   },
 };
@@ -180,7 +180,7 @@ export const BRANCHES = [
   {
     id: 'support_yun',
     label: '윤도현 밀어주기',
-    desc: '윤도현이 앞장선다 — 물자를 태워 병목을 가르면 군중이 숨을 돌리고 균열이 내려간다. 마지막 장면의 구조가 먼저 굳는다.',
+    desc: '윤도현이 앞장선다. 물자를 태워 병목을 가르면 군중이 숨을 돌리고 균열이 줄어든다. 마지막 장면의 구조가 먼저 굳는다.',
     cost: { supply: 1 },
     primaryChar: 'yundohyeon',
     effects: { rift: -4, resources: { trust: 3 }, chars: { yundohyeon: 8, iseah: -2, seogaram: 0 } },
@@ -191,7 +191,7 @@ export const BRANCHES = [
     },
     memoryTag: '윤도현 지원 [경로·함께]',
     chooseLines: [
-      '윤도현 밀어주기: 물자를 태워 대피로를 단번에 연다. 병목이 풀리고 균열이 내려간다.',
+      '윤도현 밀어주기: 물자를 태워 대피로를 단번에 연다. 병목이 풀리고 균열이 줄어든다.',
       '윤도현 밀어주기(2회차): 같은 물자라도 동선이 맞아 더 짧은 길이 열린다.',
       '윤도현 밀어주기(반복 숙련): 눈빛만으로 우회로가 갈라져, 사람과 자재가 한 번에 흘러간다.',
     ],
@@ -324,7 +324,7 @@ export const BRANCHES = [
   {
     id: 'conserve_foresight',
     label: '예지 아끼기',
-    desc: '지금은 손을 뻗지 않는다 — 예지를 아끼지만, 빈 자리로 군중이 쏟아지고 그 빚은 마지막 장면이 받아낸다.',
+    desc: '지금은 손을 뻗지 않는다. 예지를 아끼지만, 빈 자리로 군중이 쏟아지고 그 빚은 마지막 장면이 받아낸다.',
     cost: {},
     primaryChar: 'seogaram',
     effects: { rift: 8, resources: { trust: -5 }, chars: { yundohyeon: -6, iseah: -5, seogaram: 2 } },
@@ -343,7 +343,7 @@ export const BRANCHES = [
   {
     id: 'foresight_burn',
     label: '서가람 예지 집중',
-    desc: '서가람이 예지를 직접 태워 군중의 흐름을 끝까지 읽어낸다 — 기억 조각이 두 겹으로 남고 균열이 내려간다.',
+    desc: '서가람이 예지를 직접 태워 군중의 흐름을 끝까지 읽어낸다. 기억 조각이 두 겹으로 남고 균열이 줄어든다.',
     cost: { foresight: 1 },
     primaryChar: 'seogaram',
     effects: { rift: -3, resources: { memory: 2, trust: 1 }, chars: { seogaram: 8, iseah: 1 } },
@@ -354,7 +354,7 @@ export const BRANCHES = [
     },
     memoryTag: '서가람 예지 집중 [경로·진실]',
     chooseLines: [
-      '서가람 예지 집중: 예지를 불살라 군중의 흐름을 끝까지 읽어낸다. 기억이 두 겹으로 남고 균열이 내려간다.',
+      '서가람 예지 집중: 예지를 불살라 군중의 흐름을 끝까지 읽어낸다. 기억이 두 겹으로 남고 균열이 줄어든다.',
       '서가람 예지 집중(2회차): 같은 방식으로 더 깊이 들어간다. 기억 조각이 겹겹이 쌓인다.',
       '서가람 예지 집중(반복 숙련): 예지가 빠르게 타오르고 그 빛이 이미 군중 위를 먼저 지나간다.',
     ],
@@ -367,7 +367,7 @@ export const BRANCHES = [
   {
     id: 'vanguard_push',
     label: '윤도현 선두 이끌기',
-    desc: '윤도현이 신뢰 둘로 군중의 앞에 선다 — 물자 없이도 사람들이 따라오고 병목이 풀린다.',
+    desc: '윤도현이 신뢰 2로 군중의 앞에 선다. 물자 없이도 사람들이 따라오고 병목이 풀린다.',
     cost: { trust: 2 },
     primaryChar: 'yundohyeon',
     effects: { rift: -5, resources: { supply: 1, trust: 1 }, chars: { yundohyeon: 10, seogaram: 1 } },
@@ -391,7 +391,7 @@ export const BRANCHES = [
   {
     id: 'memory_shield',
     label: '이세아 기억 방패',
-    desc: '이세아가 기억 조각을 불살라 사람들을 감싼다 — 기억이 하나 줄지만 군중의 신뢰가 단단해지고 균열이 내려간다.',
+    desc: '이세아가 기억 조각을 불살라 사람들을 감싼다. 기억이 하나 줄지만 군중의 신뢰가 단단해지고 균열이 줄어든다.',
     cost: { memory: 1 },
     primaryChar: 'iseah',
     effects: { rift: -3, resources: { trust: 4 }, chars: { iseah: 7, yundohyeon: 2 } },
@@ -415,7 +415,7 @@ export const BRANCHES = [
   {
     id: 'vision_relay',
     label: '서가람 예지 전달',
-    desc: '서가람이 붕괴의 예감을 이세아에게 직접 넘긴다 — 예지 1과 집중력 1을 태워 기억이 더 선명하게 쌓이고, 이름이 먼저 길을 찾는다.',
+    desc: '서가람이 붕괴의 예감을 이세아에게 직접 넘긴다. 예지 1과 집중력 1을 써서 기억이 더 선명하게 쌓이고, 이름이 먼저 길을 찾는다.',
     cost: { foresight: 1, focus: 1 },
     primaryChar: 'iseah',
     effects: { rift: -3, resources: { memory: 2, trust: 2 }, chars: { seogaram: 6, iseah: 8, yundohyeon: -2 } },
@@ -439,7 +439,7 @@ export const BRANCHES = [
   {
     id: 'relay_command',
     label: '서가람 원격 지휘',
-    desc: '서가람이 예지로 군중 흐름을 읽은 뒤 윤도현에게 방향을 직접 전달한다 — 예지 1과 신뢰 1을 써서 물자 없이도 길을 열고 균열을 내린다.',
+    desc: '서가람이 예지로 군중 흐름을 읽은 뒤 윤도현에게 방향을 직접 전달한다. 예지 1과 신뢰 1을 써서 물자 없이도 길을 열고 균열을 줄인다.',
     cost: { foresight: 1, trust: 1 },
     primaryChar: 'seogaram',
     effects: { rift: -4, resources: { supply: 1, trust: 1 }, chars: { seogaram: 7, yundohyeon: 8, iseah: -1 } },
@@ -450,7 +450,7 @@ export const BRANCHES = [
     },
     memoryTag: '서가람 원격 지휘',
     chooseLines: [
-      '서가람 원격 지휘: 예지와 신뢰를 태워 윤도현에게 방향을 전달한다. 물자 없이도 길이 열리고 균열이 내려간다.',
+      '서가람 원격 지휘: 예지와 신뢰를 태워 윤도현에게 방향을 전달한다. 물자 없이도 길이 열리고 균열이 줄어든다.',
       '서가람 원격 지휘(2회차): 지휘 채널이 다시 열린다. 윤도현이 더 빠르게 반응하고 병목이 짧아진다.',
       '서가람 원격 지휘(반복 숙련): 서가람의 예지가 윤도현의 발걸음보다 앞선다. 군중이 이미 정렬되어 있다.',
     ],
