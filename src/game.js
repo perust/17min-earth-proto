@@ -1,5 +1,7 @@
 import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=6';
 
+const VISIBLE_BRANCH_IDS = ['support_yun', 'signal_lantern', 'memory_knot'];
+
 const els = {
   loopCount: document.getElementById('loop-count'),
   rift: document.querySelector('.rift'),
@@ -170,7 +172,7 @@ function renderBranchLinkCue() {
 function buildBranchButtons() {
   if (!els.branchButtons) return;
   els.branchButtons.innerHTML = '';
-  BRANCHES.forEach((branch) => {
+  BRANCHES.filter((branch) => VISIBLE_BRANCH_IDS.includes(branch.id)).forEach((branch) => {
     const btn = document.createElement('button');
     btn.className = 'branch-btn';
     btn.dataset.branchId = branch.id;
