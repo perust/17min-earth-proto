@@ -1,6 +1,7 @@
 import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=7';
 
 const VISIBLE_BRANCH_IDS = ['support_yun', 'signal_lantern', 'memory_knot'];
+const CHOICE_PHASE_IDS = new Set(['B', 'D']);
 
 const els = {
   loopCount: document.getElementById('loop-count'),
@@ -85,6 +86,7 @@ const state = {
   branchCounts: {},
   branchLocked: false,
   currentBranchId: null,
+  choicePhaseId: null,
   branchAftermathTriggered: false,
   phaseEntryAt: 0,
   phaseEntryCue: '',
@@ -150,8 +152,10 @@ function refreshPrimaryActionLabel() {
     els.btnStart.textContent = '다음 장면';
   } else if (currentPhase.id === 'B') {
     els.btnStart.textContent = state.branchLocked ? '여파 보기' : '다음 장면';
+  } else if (currentPhase.id === 'C') {
+    els.btnStart.textContent = '다음 장면';
   } else {
-    els.btnStart.textContent = '다음 루프';
+    els.btnStart.textContent = state.branchLocked ? '여파 정리' : '다음 루프';
   }
 }
 
@@ -210,30 +214,37 @@ function buildBranchButtons() {
 
 function updateBranchPanel() {
   const currentPhase = phaseAt(LOOP_SECONDS - state.time);
-  const inB = currentPhase.id === 'B';
-  const chosen = Boolean(state.currentBranchId);
+  const inChoice = CHOICE_PHASE_IDS.has(currentPhase.id);
+  const hasChoice = state.choicePhaseId === currentPhase.id;
   const elapsed = LOOP_SECONDS - state.time;
-  const isBEntry = inB && elapsed - state.phaseEntryAt < 5;
+  const isChoiceEntry = inChoice && elapsed - state.phaseEntryAt < 5;
   if (els.branchStatus) {
-    if (inB && !chosen) {
-      els.branchStatus.textContent = isBEntry
-        ? (state.observedThisLoop ? '이미 본 병목' : '지금 선택')
-        : '지금 선택';
+    if (inChoice && !hasChoice) {
+      if (currentPhase.id === 'D') {
+        els.branchStatus.textContent = '마지막 선택';
+      } else {
+        els.branchStatus.textContent = isChoiceEntry
+          ? (state.observedThisLoop ? '이미 본 병목' : '지금 선택')
+          : '지금 선택';
+      }
       els.branchStatus.classList.add('is-live');
-      els.branchStatus.classList.toggle('is-echoed', state.observedThisLoop && isBEntry);
-    } else if (chosen) {
+      els.branchStatus.classList.toggle('is-echoed', currentPhase.id === 'B' && state.observedThisLoop && isChoiceEntry);
+    } else if (hasChoice) {
       const branch = BRANCHES.find((b) => b.id === state.currentBranchId);
       els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} 선택됨`;
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     } else {
-      els.branchStatus.textContent = currentPhase.id === 'A' ? '개입 대기' : '개입 종료';
+      const branch = BRANCHES.find((b) => b.id === state.currentBranchId);
+      els.branchStatus.textContent = branch
+        ? `${branch.label} 여파 확인`
+        : (currentPhase.id === 'A' ? '개입 대기' : '개입 종료');
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     }
   }
   if (els.branchCard) {
-    els.branchCard.classList.toggle('is-waiting', !inB && !state.branchLocked);
+    els.branchCard.classList.toggle('is-waiting', !inChoice && !state.branchLocked);
   }
   if (els.branchButtons) {
     els.branchButtons.hidden = false;
@@ -244,10 +255,10 @@ function updateBranchPanel() {
       if (counter) counter.textContent = `x${count}`;
       const tier = button.querySelector('.branch-tier');
       if (tier) tier.textContent = masteryLabel(count);
-      button.classList.toggle('is-chosen', branchId === state.currentBranchId);
-      button.disabled = state.branchLocked || !inB;
-      button.title = inB
-        ? '지금 선택 가능'
+      button.classList.toggle('is-chosen', state.choicePhaseId === currentPhase.id && branchId === state.currentBranchId);
+      button.disabled = state.branchLocked || !inChoice;
+      button.title = inChoice
+        ? (currentPhase.id === 'D' ? '마지막 선택 구간에서 선택할 수 있다' : '지금 선택 가능')
         : '개입 구간에 도달하면 선택할 수 있다';
     });
   }
@@ -400,7 +411,8 @@ function aftermathRiderKey() {
 
 function chooseBranch(branchId) {
   const branch = BRANCHES.find((b) => b.id === branchId);
-  if (!branch || state.branchLocked || phaseAt(LOOP_SECONDS - state.time).id !== 'B') return;
+  const phaseId = phaseAt(LOOP_SECONDS - state.time).id;
+  if (!branch || state.branchLocked || !CHOICE_PHASE_IDS.has(phaseId)) return;
 
   const bonus = familiarityBonus(branch.id);
   const adjustedCost = Object.fromEntries(
@@ -416,12 +428,12 @@ function chooseBranch(branchId) {
     pushLog(`숙련 보너스: ${branch.label}를 익숙하게 다뤄 추가 비용이 줄고 신뢰가 ${bonus}만큼 늘었다.`);
   }
   state.branchLocked = true;
+  state.choicePhaseId = phaseId;
   state.currentBranchId = branch.id;
   state.branchCounts[branch.id] = (state.branchCounts[branch.id] ?? 0) + 1;
   state.running = false;
   state.lastTick = performance.now();
   refreshPrimaryActionLabel();
-  // 분기 메모리에 누적 깊이 표식을 붙여, 같은 선택이라도 1/2/3회차가 다르게 읽힌다.
   const depthCount = state.branchCounts[branch.id];
   const depthMark = depthCount >= 3 ? ' ⟳깊음' : depthCount === 2 ? ' ⟳' : '';
   state.branchMemory.push(`${branch.memoryTag}${depthMark}`);
@@ -433,7 +445,6 @@ function chooseBranch(branchId) {
   if (fail) {
     pushLog(branch.fail.log);
   } else {
-    // 숙련 tier 로 고른 기본 줄 + 지금 런 컨텍스트의 후절 = 같은 선택의 미세 분화.
     const baseLine = branch.chooseLines?.[tier] ?? `${branch.label}: ${branch.desc}`;
     const rider = BRANCH_CHOICE_RIDERS[choiceRiderKey()] ?? '';
     pushLog(baseLine + rider);
@@ -549,11 +560,15 @@ function syncPhaseEntry(currentPhase) {
   if (state.lastPhaseId === currentPhase.id) return;
   state.lastPhaseId = currentPhase.id;
 
-  if (currentPhase.id === 'B') {
+  if (currentPhase.id === 'B' || currentPhase.id === 'D') {
     state.phaseEntryAt = LOOP_SECONDS - state.time;
-    state.phaseEntryCue = state.observedThisLoop
-      ? '이미 본 병목이 같은 자리로 되돌아온다. 이번엔 그 흐름을 꺾어야 한다.'
-      : '초반의 정전이 지나고 병목이 열린다. 군중이 쏟아지기 직전의 순간으로 들어간다.';
+    state.phaseEntryCue = currentPhase.id === 'D'
+      ? (state.observedThisLoop
+        ? '후반 압박이 이미 읽혔다. 마지막 선택으로 여파를 꺾어야 한다.'
+        : '장면이 후반으로 접어든다. 마지막 선택으로 루프의 끝을 바꿀 수 있다.')
+      : (state.observedThisLoop
+        ? '이미 본 병목이 같은 자리로 되돌아온다. 이번엔 그 흐름을 꺾어야 한다.'
+        : '초반의 정전이 지나고 병목이 열린다. 군중이 쏟아지기 직전의 순간으로 들어간다.');
     return;
   }
 
@@ -569,7 +584,7 @@ function updateStoryBeat() {
   if (!beats) return;
 
   const elapsed = LOOP_SECONDS - state.time;
-  if (phase.id === 'B' && state.phaseEntryCue && elapsed - state.phaseEntryAt < 5) {
+  if (CHOICE_PHASE_IDS.has(phase.id) && state.phaseEntryCue && elapsed - state.phaseEntryAt < 5) {
     el.textContent = state.phaseEntryCue;
     return;
   }
@@ -581,16 +596,14 @@ function updateStoryBeat() {
 
   const loopTier = Math.min(Math.max(state.loop - 1, 0), 2);
 
-  // Phase A: per-loop text from beats.loops[loopTier], fallback to beats.default
-  if (phase.id === 'A') {
+  if (phase.id === 'A' || phase.id === 'C') {
     el.textContent = Array.isArray(beats.loops)
       ? (beats.loops[loopTier] ?? beats.default)
       : (beats.default ?? '');
     return;
   }
 
-  // Phase B/C with branch chosen: per-repeat-tier text from branch array
-  const branchId = state.currentBranchId;
+  const branchId = phase.id === 'D' && state.choicePhaseId !== 'D' ? null : state.currentBranchId;
   if (branchId) {
     const branchTexts = beats.branches?.[branchId];
     const branchRepeatPrefix = BRANCH_REPEAT_PREFIXES[Math.min(loopTier, BRANCH_REPEAT_PREFIXES.length - 1)] ?? '';
@@ -602,7 +615,6 @@ function updateStoryBeat() {
     return;
   }
 
-  // No branch chosen: repeat prefix + default (existing behaviour)
   const repeatIdx = Math.min(loopTier, BEAT_REPEAT_PREFIXES.length - 1);
   el.textContent = BEAT_REPEAT_PREFIXES[repeatIdx] + (beats.default ?? '');
 }
@@ -612,13 +624,17 @@ function updateClock() {
   syncPhaseEntry(currentPhase);
   els.loopClock.textContent = formatTime(state.time);
   const elapsed = LOOP_SECONDS - state.time;
-  const isBEntry = currentPhase.id === 'B' && elapsed - state.phaseEntryAt < 5;
+  const isChoiceEntry = CHOICE_PHASE_IDS.has(currentPhase.id) && elapsed - state.phaseEntryAt < 5;
   if (els.phaseName) {
-    els.phaseName.textContent = isBEntry
-      ? (state.observedThisLoop
-        ? '병목 구간 — 이미 본 흐름이 돌아온다'
-        : '병목 구간 — 지금이 개입의 순간')
-      : '';
+    if (isChoiceEntry) {
+      els.phaseName.textContent = currentPhase.id === 'D'
+        ? '마지막 압박 — 지금이 마지막 개입의 순간'
+        : (state.observedThisLoop
+          ? '병목 구간 — 이미 본 흐름이 돌아온다'
+          : '병목 구간 — 지금이 개입의 순간');
+    } else {
+      els.phaseName.textContent = '';
+    }
   }
   const pct = Math.min(1, Math.max(0, elapsed / LOOP_SECONDS));
   els.timelineCursor.style.left = `calc(${pct * 100}% - 1px)`;
@@ -818,7 +834,7 @@ function endGame(endingId) {
   recordRun();
   unlockEnding(ending.id);
   state.running = false;
-  els.btnStart.textContent = '시작';
+  refreshPrimaryActionLabel();
   els.endingCard.className = `overlay-card ending-card tone-${ending.tone}`;
   els.endingOverlay.className = `overlay tone-${ending.tone}`;
   els.endingTag.textContent = ending.tag;
@@ -957,7 +973,7 @@ function applyDisasterImpact() {
 }
 
 function applyBranchAftermath(currentPhase) {
-  if (currentPhase.id !== 'C') return;
+  if (!CHOICE_PHASE_IDS.has(currentPhase.id)) return;
   const branchId = state.currentBranchId;
   // 분기를 아예 고르지 않은 루프도 C구간에 고유한 결을 남긴다(개입 부재의 대가).
   if (!branchId) {
@@ -1083,29 +1099,29 @@ function resetLoop() {
 function advanceScene() {
   if (state.ended) return;
   const currentPhase = phaseAt(LOOP_SECONDS - state.time);
-  if (currentPhase.id === 'A') {
-    state.time = LOOP_SECONDS - PHASES[1].start;
-    state.branchLocked = false;
-    state.currentBranchId = null;
-    state.branchAftermathTriggered = false;
-    state.disasterTriggered = false;
-    state.lastPhaseId = 'A';
-    updateClock();
-    updateBranchPanel();
-    updateResources();
+  const phaseIndex = PHASES.findIndex((p) => p.id === currentPhase.id);
+
+  if (currentPhase.id === 'D') {
+    if (state.branchLocked) applyBranchAftermath(currentPhase);
+    resetLoop();
     return;
   }
-  if (currentPhase.id === 'B') {
-    state.time = LOOP_SECONDS - PHASES[2].start;
-    applyBranchAftermath(phaseAt(LOOP_SECONDS - state.time));
-    state.branchAftermathTriggered = true;
-    state.lastPhaseId = 'B';
-    updateClock();
-    updateBranchPanel();
-    updateResources();
+
+  const nextPhase = PHASES[phaseIndex + 1];
+  if (!nextPhase) {
+    resetLoop();
     return;
   }
-  resetLoop();
+
+  if (state.branchLocked && CHOICE_PHASE_IDS.has(currentPhase.id)) {
+    applyBranchAftermath(currentPhase);
+  }
+  state.branchLocked = false;
+  state.time = LOOP_SECONDS - nextPhase.start;
+  state.lastPhaseId = currentPhase.id;
+  updateClock();
+  updateBranchPanel();
+  updateResources();
 }
 
 function tick(now) {
@@ -1128,8 +1144,9 @@ els.btnReset.addEventListener('click', () => {
   state.disasterTriggered = false;
   state.branchLocked = false;
   state.currentBranchId = null;
+  state.choicePhaseId = null;
   state.branchAftermathTriggered = false;
-  els.btnStart.textContent = '시작';
+  refreshPrimaryActionLabel();
   pushLog('플레이어가 루프를 되감았다. 현재 회차의 상태를 다시 정리한다.');
   updateClock();
   updateResources();

@@ -44,9 +44,10 @@ export const CHARACTERS = [
 // time 단위: 루프 내 초(0 ~ 1020 = 17:00)
 export const LOOP_SECONDS = 17 * 60; // 1020
 export const PHASES = [
-  { id: 'A', name: '균열과 정전',   shortLabel: '',   start: 0,   end: 330,  disaster: '지각 균열 → 전체 정전' },
-  { id: 'B', name: '병목과 군중', shortLabel: '', start: 330, end: 690,  disaster: '동선 병목 → 압사' },
-  { id: 'C', name: '폭발의 여파', shortLabel: '', start: 690, end: 1020, disaster: '가스/설비 폭발' },
+  { id: 'A', name: '균열과 정전',   shortLabel: '',   start: 0,   end: 270,  disaster: '지각 균열 → 전체 정전' },
+  { id: 'B', name: '병목과 군중',   shortLabel: '',   start: 270, end: 510,  disaster: '동선 병목 → 압사' },
+  { id: 'C', name: '잔향 정리',     shortLabel: '',   start: 510, end: 765,  disaster: '가스/설비 폭발' },
+  { id: 'D', name: '마지막 압박',   shortLabel: '',   start: 765, end: 1020, disaster: '가스/설비 폭발 여진' },
 ];
 
 // ── 밸런스 상수 (§9.1, "보통" 난이도) ───────────────────────
@@ -632,7 +633,12 @@ export const STORY_BEATS = {
       ],
     },
   },
+  D: {
+    default: '폭발의 여진이 길 위에 남는다. 마지막으로 한 번 더 선택하면, 다음 루프의 바닥이 달라진다.',
+  },
 };
+
+STORY_BEATS.D.branches = STORY_BEATS.B.branches;
 
 // 루프 2회차 이상, 분기 미선택 시점에 default beat 앞에 붙는 반복감 접두사
 export const BEAT_REPEAT_PREFIXES = [
