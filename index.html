@@ -35,7 +35,7 @@
     <main id="stage" class="stage">
       <div class="stage-placeholder">
         <div class="clock" id="loop-clock">00:00</div>
-        <div class="clock-sub">/ 17:00 · <span id="phase-name">A. 균열·정전</span></div>
+        <div class="clock-sub">/ 17:00</div>
         <div id="story-beat" class="story-beat" aria-live="polite"></div>
         <div class="vision-card" aria-label="예지 관측 패널">
           <div class="vision-head">
@@ -45,13 +45,13 @@
           <div id="vision-preview" class="vision-preview">아직 관측하지 않음</div>
           <button id="btn-vision" class="btn btn-vision">미래 보기</button>
         </div>
-        <div class="branch-card" aria-label="중간 장면 분기 선택">
+        <div class="branch-card" aria-label="개입 선택 카드">
           <div class="branch-head">
             <span class="branch-title">장면 개입</span>
-            <span class="branch-note">중간 장면에서 선택할 수 있는 3가지 핵심 갈래</span>
+            <span class="branch-note">세 갈래의 개입 중 하나를 골라 흐름을 바꾼다</span>
           </div>
           <div id="branch-buttons" class="branch-buttons"></div>
-          <div id="branch-status" class="branch-status">중간 장면에서만 선택 가능</div>
+          <div id="branch-status" class="branch-status">개입이 열리면 세 갈래 중 하나를 고를 수 있다</div>
         </div>
         <div id="escape-card" class="escape-card" hidden>
           <div class="escape-glow">진원 해금</div>
@@ -91,7 +91,7 @@
     </section>
 
     <section class="carry-panel" aria-label="계승 규칙">
-      <span id="carryover-summary">다음 고리엔 기억 조각·신뢰가 남고, 예지·집중력·확보 물자는 다시 채운다 — 중간 장면의 선택은 마지막 장면의 여파로 이어진다</span>
+      <span id="carryover-summary">다음 고리엔 기억 조각·신뢰가 남고, 예지·집중력·확보 물자는 다시 채운다 — 이번 개입의 여파는 다음 국면으로 이어진다</span>
       <div id="branch-memory" class="branch-memory" title="과거 루프의 미시 선택이 누적되는 분기 메모리">분기 메모리 — 아직 선택 없음</div>
       <div id="branch-link-cue" class="branch-link-cue">연결선 — 아직 갈래가 없어</div>
     </section>
@@ -140,6 +140,6 @@
     </div>
   </div>
 
-  <script type="module" src="src/game.js?v=19"></script>
+  <script type="module" src="src/game.js?v=20"></script>
 </body>
 </html>

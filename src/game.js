@@ -1,4 +1,4 @@
-import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=6';
+import { RESOURCES, CHARACTERS, PHASES, BRANCHES, LOOP_SECONDS, BALANCE, ENDINGS, TUTORIAL_STEPS, BRANCH_CHOICE_RIDERS, BRANCH_AFTERMATH_RIDERS, STORY_BEATS, BEAT_REPEAT_PREFIXES, BRANCH_REPEAT_PREFIXES, phaseAt } from './data.js?v=7';
 
 const VISIBLE_BRANCH_IDS = ['support_yun', 'signal_lantern', 'memory_knot'];
 
@@ -151,12 +151,12 @@ function renderBranchLinkCue() {
 
   const linkMap = {
     support_yun: '윤도현 지원 ↔ 이세아 보호: 사람을 살리면 기억이 남고, 기억이 남으면 다음 개입이 빨라진다.',
-    route_anchor: '윤도현 경로 고정 ↔ 예지 관측: 방금 연 길을 다시 잡아 다음 마지막 장면의 구조를 더 단단히 묶는다.',
+    route_anchor: '윤도현 경로 고정 ↔ 예지 관측: 방금 연 길을 다시 잡아 다음 여파 국면의 구조를 더 단단히 묶는다.',
     signal_lantern: '서가람 신호 고정 ↔ 윤도현 경로 고정: 예지가 경로를 비추고, 경로가 예지를 다시 살린다.',
     protect_seah: '이세아 보호 ↔ 윤도현 지원: 기억을 지키면 구조가 또렷해지고, 구조가 또렷해지면 길이 열리기 쉽다.',
     memory_knot: '이세아 기억 매듭 ↔ 기억 보존: 이름을 더 단단히 묶을수록 다음 루프에서 같은 길을 더 쉽게 읽는다.',
     triage_chain: '윤도현 이세아 동시 구조 ↔ 서가람 신호 고정: 구조와 기억이 같이 묶일수록 다음 장면의 좌표가 선명해진다.',
-    conserve_foresight: '예지 보존 ↔ 두 분기: 지금 아낀 만큼 마지막 장면의 대가가 커지고, 다음 루프의 선택 폭은 더 좁아진다.',
+    conserve_foresight: '예지 보존 ↔ 두 분기: 지금 아낀 만큼 여파 국면의 대가가 커지고, 다음 루프의 선택 폭은 더 좁아진다.',
     foresight_burn: '서가람 예지 집중 ↔ 서가람 신호 고정: 예지를 태울수록 기억이 쌓이고, 쌓인 기억은 다음 루프의 예지를 아끼는 발판이 된다.',
     vanguard_push: '윤도현 선두 이끌기 ↔ 윤도현 밀어주기: 선두로 열어낸 길에 물자까지 더하면 병목이 두 겹으로 풀린다.',
     memory_shield: '이세아 기억 방패 ↔ 이세아 기억 매듭: 기억을 불살라 신뢰를 얻고, 매듭으로 기억을 다시 묶으면 잃은 만큼이 채워진다.',
@@ -166,7 +166,7 @@ function renderBranchLinkCue() {
   const count = state.branchCounts[branch.id] ?? 0;
   const depth = count > 0 ? ` · ${masteryLabel(count)} 누적` : '';
   const loopEcho = state.loop > 1 ? ` · ${state.loop}회차 누적` : '';
-  el.textContent = `연결선 — ${linkMap[branch.id] ?? '이 분기는 마지막 장면과 다음 루프에 여파를 남긴다.'}${depth}${loopEcho}`;
+  el.textContent = `연결선 — ${linkMap[branch.id] ?? '이 분기는 여파 국면과 다음 루프에 여파를 남긴다.'}${depth}${loopEcho}`;
 }
 
 function buildBranchButtons() {
@@ -196,8 +196,8 @@ function updateBranchPanel() {
     if (inB && !chosen) {
       els.branchStatus.textContent = isBEntry
         ? (state.observedThisLoop
-          ? '이미 보았던 병목이 같은 자리로 돌아온다 — 이번엔 그 장면을 꺾어야 한다. 중간 장면의 선택은 마지막 장면으로 이어진다.'
-          : '장면이 바로 여기서 꺾인다 — 군중이 쏟아지기 직전, 선택 하나가 길을 가른다. 중간 장면의 선택은 마지막 장면으로 이어진다.')
+          ? '이미 보았던 병목이 같은 자리로 돌아온다 — 이번엔 그 흐름을 꺾어야 한다. 한 번의 개입이 다음 국면까지 남는다.'
+          : '장면이 바로 여기서 꺾인다 — 군중이 쏟아지기 직전, 선택 하나가 길을 가른다. 한 번 고른 흐름은 다음 국면으로 이어진다.')
         : (state.observedThisLoop
           ? '예지로 본 병목이 눈앞에서 다시 열린다 — 이제 단 한 번만 손을 뻗을 수 있다. 고른 길은 다음 고리에도 남는다.'
           : '군중이 쏟아지기 직전이다 — 이 고리에서 단 한 번만 손을 뻗을 수 있다. 고른 길은 다음 고리에도 남는다.');
@@ -209,37 +209,37 @@ function updateBranchPanel() {
       const label = masteryLabel(count);
       const nextLabel = masteryLabel(count + 1);
       const consequenceNote = branch?.id === 'support_yun'
-        ? '사람을 먼저 살린 선택이다. 마지막 장면에서 구조의 흔적으로 남는다.'
+        ? '사람을 먼저 살린 선택이다. 여파 국면에서 구조의 흔적으로 남는다.'
         : branch?.id === 'route_anchor'
-          ? '윤도현의 경로를 먼저 고정한 선택이다. 마지막 장면에서 구조의 뼈대로 남는다.'
+          ? '윤도현의 경로를 먼저 고정한 선택이다. 여파 국면에서 구조의 뼈대로 남는다.'
           : branch?.id === 'signal_lantern'
-            ? '서가람의 신호를 현장에 묶은 선택이다. 마지막 장면에서 방향의 기준점으로 남는다.'
+            ? '서가람의 신호를 현장에 묶은 선택이다. 여파 국면에서 방향의 기준점으로 남는다.'
             : branch?.id === 'protect_seah'
-              ? '기억을 먼저 지킨 선택이다. 마지막 장면에서 단서의 결로 남는다.'
+              ? '기억을 먼저 지킨 선택이다. 여파 국면에서 단서의 결로 남는다.'
               : branch?.id === 'memory_knot'
-                ? '이세아의 기억을 묶어 둔 선택이다. 마지막 장면에서 기억의 매듭으로 남는다.'
+                ? '이세아의 기억을 묶어 둔 선택이다. 여파 국면에서 기억의 매듭으로 남는다.'
                 : branch?.id === 'triage_chain'
-                  ? '윤도현과 이세아를 동시에 살린 선택이다. 마지막 장면에서 협업의 경로로 남는다.'
+                  ? '윤도현과 이세아를 동시에 살린 선택이다. 여파 국면에서 협업의 경로로 남는다.'
                   : branch?.id === 'conserve_foresight'
-                    ? '지연의 빚을 남긴 선택이다. 마지막 장면에서 대가로 되돌아온다.'
+                    ? '지연의 빚을 남긴 선택이다. 여파 국면에서 대가로 되돌아온다.'
                     : branch?.id === 'foresight_burn'
-                      ? '예지를 태워 기억을 쌓은 선택이다. 마지막 장면에서 기억의 좌표로 남는다.'
+                      ? '예지를 태워 기억을 쌓은 선택이다. 여파 국면에서 기억의 좌표로 남는다.'
                       : branch?.id === 'vanguard_push'
-                        ? '신뢰로 앞에 선 선택이다. 마지막 장면에서 선두의 경로로 남는다.'
+                        ? '신뢰로 앞에 선 선택이다. 여파 국면에서 선두의 경로로 남는다.'
                         : branch?.id === 'memory_shield'
-                          ? '기억을 불살라 신뢰를 얻은 선택이다. 마지막 장면에서 방패의 빛으로 남는다.'
+                          ? '기억을 불살라 신뢰를 얻은 선택이다. 여파 국면에서 방패의 빛으로 남는다.'
                           : branch?.id === 'vision_relay'
-                            ? '서가람의 예지를 이세아에게 넘긴 선택이다. 마지막 장면에서 기억의 이중 선으로 남는다.'
+                            ? '서가람의 예지를 이세아에게 넘긴 선택이다. 여파 국면에서 기억의 이중 선으로 남는다.'
                             : branch?.id === 'relay_command'
-                              ? '서가람이 예지로 윤도현을 이끈 선택이다. 마지막 장면에서 원격 지휘의 경로로 남는다.'
-                              : '이 선택의 여파가 마지막 장면에서 마저 드러난다.';
+                              ? '서가람이 예지로 윤도현을 이끈 선택이다. 여파 국면에서 원격 지휘의 경로로 남는다.'
+                              : '이 선택의 여파가 여파 국면에서 마저 드러난다.';
       els.branchStatus.textContent = `${branch?.label ?? '선택 완료'} — ${label} 손길. 이어지는 여파: ${consequenceNote} 같은 선택이 쌓이면 ${nextLabel}로 이어진다.`;
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     } else {
       els.branchStatus.textContent = currentPhase.id === 'A'
-        ? '중간 장면에선 선택이 열려. 지금은 예지만 남겨 둬.'
-        : '마지막 장면이 열렸어. 중간엔 손을 못 뻗었지.';
+        ? '지금은 개입이 열려 있지 않다. 예지만 남겨 두자.'
+        : '지금은 개입이 닫혀 있다. 이미 흐름이 다른 국면으로 넘어갔다.';
       els.branchStatus.classList.remove('is-live');
       els.branchStatus.classList.remove('is-echoed');
     }
@@ -260,7 +260,7 @@ function updateBranchPanel() {
       button.disabled = state.branchLocked || !inB;
       button.title = inB
         ? '지금 선택 가능'
-        : '중간 장면에 도달하면 선택할 수 있다';
+        : '개입 구간에 도달하면 선택할 수 있다';
     });
   }
 }
@@ -368,7 +368,7 @@ function applyCrossBranchSynergy(branch) {
     state.rift = clamp(state.rift - 2, 0, BALANCE.riftThreshold);
     state.resources.supply = clamp(state.resources.supply + 1, 0, 4);
     state.resources.trust = clamp(state.resources.trust + 2, 0, 100);
-    pushLog('윤도현 지원이 남긴 길 위에 예지가 겹쳤다. 막힌 병목이 구조로 고정되며 다음 마지막 장면의 바닥이 넓어졌다.');
+    pushLog('윤도현 지원이 남긴 길 위에 예지가 겹쳤다. 막힌 병목이 구조로 고정되며 다음 여파 국면의 바닥이 넓어졌다.');
   } else if (prevId === 'protect_seah' && branch.id === 'memory_knot') {
     state.resources.memory += 1;
     state.resources.trust = clamp(state.resources.trust + 1, 0, 100);
@@ -458,8 +458,8 @@ function buildTimeline() {
     const seg = document.createElement('div');
     seg.className = 'timeline-seg';
     seg.style.width = `${100 / PHASES.length}%`;
-    seg.textContent = phase.shortLabel ?? phase.id;
-    seg.title = `${phase.name} · ${formatTime(LOOP_SECONDS - phase.start)} ~ ${formatTime(LOOP_SECONDS - phase.end)}`;
+    seg.textContent = '';
+    seg.title = `${formatTime(LOOP_SECONDS - phase.start)} ~ ${formatTime(LOOP_SECONDS - phase.end)}`;
     seg.style.background = idx % 2 === 0 ? 'rgba(47, 212, 200, 0.05)' : 'rgba(255, 93, 93, 0.04)';
     els.timelineTrack.appendChild(seg);
   });
@@ -541,18 +541,18 @@ function updateVisionPanel() {
   const currentPhase = phaseAt(LOOP_SECONDS - state.time);
   if (state.observedThisLoop) {
     els.visionPreview.textContent =
-      '관측 완료: 이미 본 중간 장면이 돌아온다. 군중 병목이 같은 자리에서 먼저 터지고, 윤도현의 동선 개방이 뒤따른다. 이제는 그 장면을 바꾸는 쪽이 남았다.';
+      '관측 완료: 이미 본 병목이 돌아온다. 군중이 같은 자리에서 먼저 터지고, 윤도현의 동선 개방이 뒤따른다. 이제는 그 흐름을 바꾸는 쪽이 남았다.';
   } else if (currentPhase.id === 'A') {
     els.visionPreview.textContent = '아직 관측하지 않음. 예지를 쓰면 다음 17분의 윤곽이 먼저 드러난다.';
   } else if (currentPhase.id === 'B') {
-    els.visionPreview.textContent = '지금은 중간 장면. 관측하면 병목의 방향과 첫 비명이 먼저 보인다.';
+    els.visionPreview.textContent = '지금은 개입 직전의 흐름이다. 관측하면 병목의 방향과 첫 비명이 먼저 보인다.';
   } else {
-    els.visionPreview.textContent = '지금은 마지막 장면. 예지를 쓰면 폭발 직전의 안전한 경로와 남은 사람의 위치를 빠르게 판별할 수 있다.';
+    els.visionPreview.textContent = '지금은 여파 국면. 예지를 쓰면 폭발 직전의 안전한 경로와 남은 사람의 위치를 빠르게 판별할 수 있다.';
   }
 }
 
 function updateCarryoverSummary(extra = '') {
-  const base = '계승: 기억 조각·신뢰 / 초기화: 예지·집중력·확보 물자 · 중간 장면의 선택은 마지막 장면의 여파로 이어진다';
+  const base = '계승: 기억 조각·신뢰 / 초기화: 예지·집중력·확보 물자 · 이번 개입의 여파는 다음 국면으로 이어진다';
   els.carryoverSummary.textContent = extra ? `${base} · ${extra}` : base;
 }
 
@@ -563,8 +563,8 @@ function syncPhaseEntry(currentPhase) {
   if (currentPhase.id === 'B') {
     state.phaseEntryAt = LOOP_SECONDS - state.time;
     state.phaseEntryCue = state.observedThisLoop
-      ? '이미 본 중간 장면이 같은 자리로 되돌아온다. 이번엔 그 흐름을 꺾어야 한다.'
-      : '첫 장면이 지나고 중간 장면이 열린다. 군중이 쏟아지기 직전의 장면으로 들어간다.';
+      ? '이미 본 병목이 같은 자리로 되돌아온다. 이번엔 그 흐름을 꺾어야 한다.'
+      : '초반의 정전이 지나고 병목이 열린다. 군중이 쏟아지기 직전의 순간으로 들어간다.';
     return;
   }
 
@@ -624,11 +624,13 @@ function updateClock() {
   els.loopClock.textContent = formatTime(state.time);
   const elapsed = LOOP_SECONDS - state.time;
   const isBEntry = currentPhase.id === 'B' && elapsed - state.phaseEntryAt < 5;
-  els.phaseName.textContent = isBEntry
-    ? (state.observedThisLoop
-      ? '중간 장면 — 이미 본 흐름이 돌아온다'
-      : '중간 장면 — 지금이 개입의 순간')
-    : currentPhase.name;
+  if (els.phaseName) {
+    els.phaseName.textContent = isBEntry
+      ? (state.observedThisLoop
+        ? '병목 구간 — 이미 본 흐름이 돌아온다'
+        : '병목 구간 — 지금이 개입의 순간')
+      : '';
+  }
   const pct = Math.min(1, Math.max(0, elapsed / LOOP_SECONDS));
   els.timelineCursor.style.left = `calc(${pct * 100}% - 1px)`;
   updateStoryBeat();
@@ -662,7 +664,7 @@ function updateResources() {
   renderBranchMemory();
   renderBranchLinkCue();
   const runCue = state.runBonus > 0 ? ` · 회차 보상 예지 +${state.runBonus}` : '';
-  updateCarryoverSummary(`현재 평균 신뢰 ${averageTrust()}%${runCue} · 마지막 장면의 여파가 다음 고리로 이어진다`);
+  updateCarryoverSummary(`현재 평균 신뢰 ${averageTrust()}%${runCue} · 여파 국면의 여파가 다음 고리로 이어진다`);
   checkEndState();
 }
 
@@ -959,8 +961,8 @@ function applyDisasterImpact() {
 
   pushLog(
     observed
-      ? '중간 장면 예지: 군중 병목을 읽어 피해를 줄였다. 예지 1을 쓰고, 신뢰 손실을 최소화했다.'
-      : '중간 장면 압사: 예지 없이 돌입해 신뢰와 집중력이 흔들렸다. 다음 루프에서 관측이 필요하다.'
+      ? '병목 구간 예지: 군중 병목을 읽어 피해를 줄였다. 예지 1을 쓰고, 신뢰 손실을 최소화했다.'
+      : '병목 구간 압사: 예지 없이 돌입해 신뢰와 집중력이 흔들렸다. 다음 루프에서 관측이 필요하다.'
   );
 }
 
@@ -970,7 +972,7 @@ function applyBranchAftermath(currentPhase) {
   // 분기를 아예 고르지 않은 루프도 C구간에 고유한 결을 남긴다(개입 부재의 대가).
   if (!branchId) {
     state.rift = clamp(state.rift + 3, 0, BALANCE.riftThreshold);
-    pushLog('분기 없는 루프: 손을 뻗지 못한 대가가 마지막 장면 폭발과 함께 한 번에 되돌아왔다.'
+    pushLog('분기 없는 루프: 손을 뻗지 못한 대가가 여파 국면 폭발과 함께 한 번에 되돌아왔다.'
       + (BRANCH_AFTERMATH_RIDERS[aftermathRiderKey()] ?? ''));
     return;
   }
@@ -1037,7 +1039,7 @@ function triggerPhaseDisaster(currentPhase) {
   if (currentPhase.id !== 'B' || state.disasterTriggered) return;
   state.disasterTriggered = true;
   if (!state.branchLocked) {
-    pushLog('중간 장면 미선택: 작은 선택이 늦어져 기본 피해가 발생했다.');
+    pushLog('병목 구간 미선택: 작은 선택이 늦어져 기본 피해가 발생했다.');
   }
   applyDisasterImpact();
   updateResources();
@@ -1049,7 +1051,7 @@ function observeFuture() {
   state.resources.foresight -= 1;
   state.resources.memory += 1;
   state.observedThisLoop = true;
-  pushLog('예지 관측: 중간 장면의 군중 병목과 윤도현의 동선 개방이 먼저 보였다. 이제 그 장면을 바꿀 한 번의 손길만 남았다.');
+  pushLog('예지 관측: 병목 구간의 군중 병목과 윤도현의 동선 개방이 먼저 보였다. 이제 그 장면을 바꿀 한 번의 손길만 남았다.');
   updateResources();
 }
 
